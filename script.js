@@ -60,7 +60,8 @@ function checkCurrentUser() {
             isAdminMode = true;
             showAdminPage();
         } else {
-            showGradeSelection();
+            window.location.href = "vote.html";
+return;
         }
     } else {
         showLoginPage();
@@ -159,7 +160,20 @@ function registerStudent() {
     };
 
     saveStudents(students);
-    alert('ลงทะเบียนสำเร็จ! โปรดเข้าสู่ระบบ');
+    alert('ลงทะเบียนสำเร็จ! กำลังพาไปหน้าโหวต...');
+
+// เก็บข้อมูล user ชั่วคราว (optional)
+sessionStorage.setItem('currentUser', JSON.stringify({
+    studentID,
+    name,
+    grade: parseInt(grade),
+    classroom: parseInt(classroom),
+    isAdmin: false
+}));
+
+// ไปหน้า vote.html
+alert('ลงทะเบียนสำเร็จ! กรุณาเข้าสู่ระบบ');
+switchStudentTab('login');
     
     document.getElementById('regStudentID').value = '';
     document.getElementById('regName').value = '';
@@ -206,7 +220,8 @@ function studentLogin() {
     document.getElementById('loginStudentID').value = '';
     document.getElementById('loginPassword').value = '';
     
-    showGradeSelection();
+    window.location.href = 'vote.html';
+return;
 }
 
 function adminLogin() {
