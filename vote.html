@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ระบบโหวตนักเรียน</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:         #0F1B2D;
+      --blue:         #1E3A5F;
+      --emerald:      #10B981;
+      --emerald-dark: #059669;
+      --bg:           #F0F5FB;
+      --card:         #FFFFFF;
+      --text:         #1A2940;
+      --muted:        #6B7E96;
+      --divider:      #CBD5E1;
+      --purple:       #7C3AED;
+      --purple-dark:  #5B21B6;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      padding: 22px 24px 18px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(15,27,45,.35);
+    }
+
+    header h1 { font-size: 1.45rem; font-weight: 800; color: #fff; letter-spacing: .02em; }
+    header p  { font-size: .82rem; color: #94B4D4; margin-top: 3px; }
+
+    /* ── ADMIN TOGGLE ── */
+    .admin-toggle-bar {
+      background: var(--card);
+      border-bottom: 1px solid var(--divider);
+      padding: 10px 20px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 74px;
+      z-index: 98;
+    }
+
+    #adminToggleBtn {
+      font-family: 'Sarabun', sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1.5px solid var(--purple);
+      background: #fff;
+      color: var(--purple);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    #adminToggleBtn:hover,
+    #adminToggleBtn.active {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    /* ── ADMIN PANEL ── */
+    #adminPanel {
+      display: none;
+      background: #F5F3FF;
+      border-bottom: 2px solid #DDD6FE;
+      padding: 20px 24px;
+    }
+    #adminPanel.open { display: block; }
+
+    #adminPanel h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--purple);
+      margin-bottom: 16px;
+    }
+
+    .admin-form-grid {
+      display: grid;
+      grid-template-columns: auto 1fr 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: .73rem; font-weight: 700; color: var(--blue); }
+
+    .form-group input,
+    .form-group select {
+      font-family: 'Sarabun', sans-serif;
+      font-size: .82rem;
+      padding: 8px 12px;
+      border: 1.5px solid var(--divider);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus { border-color: var(--purple); }
+
+    /* avatar upload preview */
+    .avatar-upload-wrap {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: 2px dashed #A78BFA;
+      background: #EDE9FE;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: border-color .2s;
+    }
+    .avatar-upload-wrap:hover { border-color: var(--purple); }
+    .avatar-upload-wrap img  { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-upload-wrap span { font-size: .68rem; color: #A78BFA; text-align: center; line-height: 1.3; padding: 4px; }
+    #avatarFileInput { display: none; }
+
+    .btn-add {
+      font-family: 'Sarabun', sans-serif;
+      font-size: .84rem;
+      font-weight: 700;
+      padding: 9px 20px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(124,58,237,.3);
+      transition: opacity .18s, transform .15s;
+      white-space: nowrap;
+    }
+    .btn-add:hover { opacity: .88; transform: scale(1.03); }
+
+    /* ── GRADE NAV ── */
+    .grade-nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      background: var(--card);
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .grade-nav a {
+      text-decoration: none;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--blue);
+      background: var(--bg);
+      border: 1.5px solid var(--divider);
+      border-radius: 20px;
+      padding: 5px 14px;
+      transition: all .2s;
+    }
+    .grade-nav a:hover { background: var(--emerald); color: #fff; border-color: var(--emerald); }
+
+    /* ── MAIN ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    /* ── SECTION ── */
+    .grade-section { margin-bottom: 52px; }
+
+    .section-header { margin-bottom: 6px; }
+
+    .section-header h2 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-header h2 .badge {
+      background: linear-gradient(135deg, var(--emerald) 0%, #059669 100%);
+      color: #fff;
+      font-size: .65rem;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 3px 10px;
+    }
+
+    .section-divider {
+      height: 3px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--emerald) 0%, #93C5FD 60%, transparent 100%);
+      margin-top: 8px;
+      margin-bottom: 22px;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      color: var(--muted);
+      font-size: .82rem;
+      padding: 18px 0 4px;
+      font-style: italic;
+    }
+
+    /* ── CARD GRID ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    /* ── STUDENT CARD ── */
+    .student-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px 14px 18px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(15,27,45,.07);
+      border: 1.5px solid #E2EAF4;
+      transition: transform .22s, box-shadow .22s;
+      position: relative;
+    }
+    .student-card:hover { transform: translateY(-5px); box-shadow: 0 10px 28px rgba(15,27,45,.13); }
+
+    /* delete button (admin only) */
+    .btn-delete {
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: none;
+      background: #FEE2E2;
+      color: #DC2626;
+      font-size: .78rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
+    }
+    .btn-delete:hover { background: #FCA5A5; }
+    body.admin-open .btn-delete { display: flex; }
+
+    .avatar-wrap {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      overflow: hidden;
+      border: 4px solid #E2EAF4;
+      background: #E8F0FE;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .avatar-wrap svg { width: 72px; height: 72px; opacity: .5; }
+
+    .student-name  { font-size: .88rem; font-weight: 700; color: var(--text); line-height: 1.35; margin-bottom: 4px; }
+    .student-class { font-size: .75rem; color: var(--muted); margin-bottom: 14px; }
+
+    .btn-vote {
+      display: inline-block;
+      width: 100%;
+      padding: 9px 0;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%);
+      color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .84rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .03em;
+      transition: opacity .18s, transform .15s;
+      box-shadow: 0 3px 10px rgba(16,185,129,.3);
+    }
+    .btn-vote:hover  { opacity: .88; transform: scale(1.03); }
+    .btn-vote:active { opacity: 1;   transform: scale(.97); }
+    .btn-vote.voted  { background: linear-gradient(135deg, #6B7E96 0%, #4A5568 100%); box-shadow: none; cursor: default; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--navy);
+      color: #fff;
+      padding: 12px 26px;
+      border-radius: 30px;
+      font-size: .85rem; font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+      white-space: nowrap;
+      z-index: 9999;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .admin-form-grid { grid-template-columns: auto 1fr 1fr; }
+      .btn-add         { grid-column: span 2; }
+    }
+    @media (max-width: 768px) {
+      .card-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+      .avatar-wrap { width: 100px; height: 100px; }
+      .avatar-wrap svg { width: 60px; height: 60px; }
+    }
+    @media (max-width: 600px) {
+      .admin-form-grid { grid-template-columns: 1fr; }
+      .avatar-upload-wrap { width: 80px; height: 80px; margin: 0 auto; }
+      .card-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .avatar-wrap { width: 90px; height: 90px; }
+      .avatar-wrap svg { width: 54px; height: 54px; }
+      header h1 { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🗳️ ระบบโหวตนักเรียนดีเด่น</h1>
+  <p>เลือกนักเรียนที่คุณต้องการโหวตในแต่ละระดับชั้น</p>
+</header>
+
+<!-- Admin toggle bar -->
+<div class="admin-toggle-bar">
+  <span style="font-size:.75rem; color:var(--muted);">โหมดผู้ดูแล</span>
+  <button id="adminToggleBtn" onclick="toggleAdmin()">⚙️ เพิ่มนักเรียน</button>
+</div>
+
+<!-- Admin panel -->
+<div id="adminPanel">
+  <h3>➕ เพิ่มการ์ดนักเรียน</h3>
+  <div class="admin-form-grid">
+
+    <!-- avatar upload -->
+    <div class="form-group">
+      <label>รูปภาพ</label>
+      <div class="avatar-upload-wrap" id="avatarPreviewWrap" onclick="document.getElementById('avatarFileInput').click()">
+        <span>แตะเพื่อ<br>เลือกรูป</span>
+      </div>
+      <input type="file" id="avatarFileInput" accept="image/*" onchange="previewAvatar(this)"/>
+    </div>
+
+    <!-- name -->
+    <div class="form-group">
+      <label>ชื่อ-นามสกุล</label>
+      <input type="text" id="inputName" placeholder="เช่น สมชาย ใจดี"/>
+    </div>
+
+    <!-- grade -->
+    <div class="form-group">
+      <label>ระดับชั้น (ม.)</label>
+      <select id="inputGrade">
+        <option value="">-- เลือกชั้น --</option>
+        <option value="1">ม.1</option>
+        <option value="2">ม.2</option>
+        <option value="3">ม.3</option>
+        <option value="4">ม.4</option>
+        <option value="5">ม.5</option>
+        <option value="6">ม.6</option>
+      </select>
+    </div>
+
+    <!-- room -->
+    <div class="form-group">
+      <label>ห้อง</label>
+      <input type="text" id="inputRoom" placeholder="เช่น 1, 2, 3"/>
+    </div>
+
+    <!-- submit -->
+    <div class="form-group">
+      <label>&nbsp;</label>
+      <button class="btn-add" onclick="addStudent()">+ เพิ่มนักเรียน</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Grade nav -->
+<nav class="grade-nav" id="gradeNav"></nav>
+
+<main id="main"></main>
+
+<div id="toast"></div>
+
+<script>
+  // ── STATE ─────────────────────────────────────────────────────────────────
+  const GRADES = [1,2,3,4,5,6];
+  const STORAGE_KEY = 'voteStudents';
+
+  const avatarColors = [
+    ['#DBEAFE','#3B82F6'], ['#FCE7F3','#EC4899'],
+    ['#D1FAE5','#10B981'], ['#FEF3C7','#F59E0B'],
+    ['#EDE9FE','#8B5CF6'], ['#FFE4E6','#F43F5E'],
+  ];
+
+  // โหลดข้อมูลจาก localStorage หรือเริ่มต้นว่าง
+  function loadStudents() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+    catch { return {}; }
+  }
+
+  function saveStudents(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  let pendingAvatarBase64 = null;
+
+  // ── BUILD SECTIONS ────────────────────────────────────────────────────────
+  const navEl  = document.getElementById('gradeNav');
+  const mainEl = document.getElementById('main');
+
+  GRADES.forEach(g => {
+    // nav pill
+    const a = document.createElement('a');
+    a.href = `#grade-${g}`;
+    a.textContent = `ม.${g}`;
+    navEl.appendChild(a);
+
+    // section skeleton
+    const sec = document.createElement('section');
+    sec.className = 'grade-section';
+    sec.id = `grade-${g}`;
+    sec.innerHTML = `
+      <div class="section-header">
+        <h2>มัธยมศึกษาปีที่ ${g} <span class="badge">ม.${g}</span></h2>
+      </div>
+      <div class="section-divider"></div>
+      <div class="card-grid" id="grid-${g}"></div>
+      <p class="empty-state" id="empty-${g}">ยังไม่มีนักเรียนในระดับชั้นนี้</p>
+    `;
+    mainEl.appendChild(sec);
+  });
+
+  // ── RENDER ALL ────────────────────────────────────────────────────────────
+  function renderAll() {
+    const data = loadStudents();
+    GRADES.forEach(g => {
+      const grid  = document.getElementById(`grid-${g}`);
+      const empty = document.getElementById(`empty-${g}`);
+      const list  = data[g] || [];
+
+      grid.innerHTML = '';
+
+      if (list.length === 0) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      const [bgCol, accentCol] = avatarColors[g - 1];
+
+      list.forEach((s, idx) => {
+        const card = document.createElement('div');
+        card.className = 'student-card';
+
+        const avatarInner = s.img
+          ? `<img src="${s.img}" alt="${s.name}"/>`
+          : `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <circle cx="24" cy="18" r="9" fill="${accentCol}"/>
+               <path d="M6 42c0-9.94 8.06-18 18-18s18 8.06 18 18" fill="${accentCol}"/>
+             </svg>`;
+
+        card.innerHTML = `
+          <button class="btn-delete" title="ลบนักเรียน" onclick="deleteStudent(${g}, ${idx})">✕</button>
+          <div class="avatar-wrap" style="background:${bgCol}; border-color:${bgCol};">
+            ${avatarInner}
+          </div>
+          <div class="student-name">${s.name}</div>
+          <div class="student-class">ม.${g}/${s.room}</div>
+          <button class="btn-vote" onclick="handleVote(this, '${s.name}')">🗳️ Vote</button>
+        `;
+        grid.appendChild(card);
+      });
+    });
+  }
+
+  // ── ADD STUDENT ───────────────────────────────────────────────────────────
+  function addStudent() {
+    const name  = document.getElementById('inputName').value.trim();
+    const grade = document.getElementById('inputGrade').value;
+    const room  = document.getElementById('inputRoom').value.trim();
+
+    if (!name)  { showToast('⚠️ กรุณากรอกชื่อ-นามสกุล', true); return; }
+    if (!grade) { showToast('⚠️ กรุณาเลือกระดับชั้น', true); return; }
+    if (!room)  { showToast('⚠️ กรุณากรอกห้อง', true); return; }
+
+    const data = loadStudents();
+    const g    = parseInt(grade);
+    if (!data[g]) data[g] = [];
+
+    data[g].push({
+      name,
+      room,
+      img: pendingAvatarBase64 || null,
+    });
+
+    saveStudents(data);
+    renderAll();
+
+    // reset form
+    document.getElementById('inputName').value  = '';
+    document.getElementById('inputGrade').value = '';
+    document.getElementById('inputRoom').value  = '';
+    pendingAvatarBase64 = null;
+    const wrap = document.getElementById('avatarPreviewWrap');
+    wrap.innerHTML = '<span>แตะเพื่อ<br>เลือกรูป</span>';
+
+    showToast(`✅ เพิ่ม "${name}" ใน ม.${g} แล้ว`);
+  }
+
+  // ── DELETE STUDENT ────────────────────────────────────────────────────────
+  function deleteStudent(grade, idx) {
+    if (!confirm('ต้องการลบนักเรียนคนนี้?')) return;
+    const data = loadStudents();
+    data[grade].splice(idx, 1);
+    saveStudents(data);
+    renderAll();
+    showToast('🗑️ ลบนักเรียนแล้ว');
+  }
+
+  // ── AVATAR PREVIEW ────────────────────────────────────────────────────────
+  function previewAvatar(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      pendingAvatarBase64 = e.target.result;
+      const wrap = document.getElementById('avatarPreviewWrap');
+      wrap.innerHTML = `<img src="${pendingAvatarBase64}" alt="preview"/>`;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ── VOTE ──────────────────────────────────────────────────────────────────
+  function handleVote(btn, name) {
+    if (btn.classList.contains('voted')) return;
+    btn.classList.add('voted');
+    btn.textContent = '✔ โหวตแล้ว';
+    btn.disabled = true;
+    showToast(`✅ โหวตให้ "${name}" สำเร็จ!`);
+  }
+
+  // ── ADMIN TOGGLE ──────────────────────────────────────────────────────────
+  function toggleAdmin() {
+    const panel = document.getElementById('adminPanel');
+    const btn   = document.getElementById('adminToggleBtn');
+    const isOpen = panel.classList.toggle('open');
+    btn.classList.toggle('active', isOpen);
+    document.body.classList.toggle('admin-open', isOpen);
+    btn.textContent = isOpen ? '✕ ปิดโหมดAdmin' : '⚙️ เพิ่มนักเรียน';
+  }
+
+  // ── TOAST ─────────────────────────────────────────────────────────────────
+  let toastTimer;
+  const toastEl = document.getElementById('toast');
+
+  function showToast(msg, isWarn = false) {
+    clearTimeout(toastTimer);
+    toastEl.textContent = msg;
+    toastEl.style.background = isWarn ? '#B45309' : 'var(--navy)';
+    toastEl.classList.add('show');
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2800);
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────────────────
+  renderAll();
+</script>
+</body>
+</html>
