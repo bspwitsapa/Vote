@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ระบบโหวตนักเรียน</title>
+  <title>นักเรียนดีเป็นศรีบางสะพาน</title>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -528,7 +528,7 @@
 <body>
 
 <header>
-  <h1>🗳️ ระบบโหวตนักเรียนดีเด่น</h1>
+  <h1>นักเรียนดีเป็นศรีบางสะพาน</h1>
   <p>เลือกนักเรียนที่คุณต้องการโหวตในแต่ละระดับชั้น</p>
 </header>
 
@@ -616,10 +616,11 @@
 
 <div id="toast"></div>
 
+<script src="db.js"></script>
 <script>
   // ── CONSTANTS ──────────────────────────────────────────────────────────────
   const GRADES      = [1,2,3,4,5,6];
-  const STORAGE_KEY = 'voteStudents';   // ข้อมูลการ์ดนักเรียน
+  const STORAGE_KEY = 'voteStudents';   // ข้อมูลการ์ดนักเรียน (metadata ไม่มีรูป)
   const VOTED_KEY   = 'votedNames';     // บันทึกว่า user นี้โหวตใครแล้ว
 
   const avatarColors = [
@@ -673,8 +674,13 @@
     catch { return {}; }
   }
 
+  // บันทึก metadata ลง localStorage — ไม่รวม img (รูปอยู่ IndexedDB แยก)
   function saveStudents(data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const stripped = {};
+    for (const g in data) {
+      stripped[g] = (data[g] || []).map(({ img, ...rest }) => rest);
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stripped));
   }
 
   // voted set เฉพาะ user คนนี้ (เก็บตาม studentID หรือ 'admin')
@@ -713,38 +719,41 @@
     mainEl.appendChild(sec);
   });
 
-  // ── RENDER ALL ────────────────────────────────────────────────────────────
-  function renderAll() {
+  // ── RENDER ALL (async — โหลดรูปจาก IndexedDB) ────────────────────────────
+  async function renderAll() {
     const data         = loadStudents();
     const alreadyVoted = hasUsedVote();
 
-    GRADES.forEach(g => {
-      const key   = String(g);             // ใช้ string key เสมอให้ตรงกับ JSON
+    for (const g of GRADES) {
+      const key   = String(g);
       const grid  = document.getElementById(`grid-${g}`);
       const empty = document.getElementById(`empty-${g}`);
       const list  = data[key] || [];
 
       grid.innerHTML = '';
 
-      if (list.length === 0) { empty.style.display = 'block'; return; }
+      if (list.length === 0) { empty.style.display = 'block'; continue; }
       empty.style.display = 'none';
 
       const [bgCol, accentCol] = avatarColors[g - 1];
 
-      list.forEach((s, idx) => {
+      for (let idx = 0; idx < list.length; idx++) {
+        const s    = list[idx];
         const card = document.createElement('div');
         card.className = 'student-card';
 
-        const avatarInner = s.img
-          ? `<img src="${s.img}" alt="avatar"/>`
+        // ดึงรูปจาก IndexedDB ด้วย key "student_<grade>_<idx>"
+        const imgKey  = `student_${g}_${idx}`;
+        const imgData = await dbGetImage(imgKey).catch(() => null);
+
+        const avatarInner = imgData
+          ? `<img src="${imgData}" alt="avatar"/>`
           : `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                <circle cx="24" cy="18" r="9" fill="${accentCol}"/>
                <path d="M6 42c0-9.94 8.06-18 18-18s18 8.06 18 18" fill="${accentCol}"/>
              </svg>`;
 
-        // encode ชื่อเป็น JSON เพื่อหลีกเลี่ยงปัญหา apostrophe ในชื่อ
-        const safeName = JSON.stringify(s.name);
-
+        const safeName     = JSON.stringify(s.name);
         const disabledAttr = alreadyVoted ? 'disabled' : '';
         const styleAttr    = alreadyVoted ? 'style="opacity:.45" title="คุณใช้สิทธิ์โหวตไปแล้ว"' : '';
 
@@ -761,12 +770,12 @@
                   ${disabledAttr} ${styleAttr}>🗳️ Vote</button>
         `;
         grid.appendChild(card);
-      });
-    });
+      }
+    }
   }
 
   // ── ADD STUDENT (admin only) ──────────────────────────────────────────────
-  function addStudent() {
+  async function addStudent() {
     if (!isAdmin) { showToast('⛔ เฉพาะผู้ดูแลระบบเท่านั้น', true); return; }
 
     const name  = document.getElementById('inputName').value.trim();
@@ -778,12 +787,27 @@
     if (!room)  { showToast('⚠️ กรุณากรอกห้อง', true); return; }
 
     const data = loadStudents();
-    const g    = String(parseInt(grade));   // บังคับ string key เสมอ
+    const g    = String(parseInt(grade));
     if (!data[g]) data[g] = [];
 
-    data[g].push({ name, room, img: pendingAvatarBase64 || null });
+    const idx = data[g].length;   // index ของนักเรียนคนใหม่
+
+    // บันทึก metadata (ไม่มี img)
+    data[g].push({ name, room });
     saveStudents(data);
-    renderAll();
+
+    // บันทึกรูปใน IndexedDB (compress ก่อน)
+    if (pendingAvatarBase64) {
+      try {
+        const compressed = await compressImage(pendingAvatarBase64, 400, 0.75);
+        await dbSetImage(`student_${g}_${idx}`, compressed);
+      } catch (e) {
+        console.error('[DB] save image error', e);
+        showToast('⚠️ บันทึกรูปภาพไม่สำเร็จ แต่เพิ่มนักเรียนแล้ว', true);
+      }
+    }
+
+    await renderAll();
 
     // reset form
     document.getElementById('inputName').value  = '';
@@ -797,15 +821,35 @@
   }
 
   // ── DELETE STUDENT (admin only) ───────────────────────────────────────────
-  function deleteStudent(grade, idx) {
+  async function deleteStudent(grade, idx) {
     if (!isAdmin) { showToast('⛔ เฉพาะผู้ดูแลระบบเท่านั้น', true); return; }
     if (!confirm('ต้องการลบนักเรียนคนนี้?')) return;
 
     const data = loadStudents();
     const key  = String(grade);
-    if (data[key]) data[key].splice(idx, 1);
+    const list = data[key] || [];
+
+    // ลบ metadata
+    list.splice(idx, 1);
     saveStudents(data);
-    renderAll();
+
+    // ลบรูปของคนนี้ออกจาก IndexedDB
+    await dbDeleteImage(`student_${grade}_${idx}`).catch(() => {});
+
+    // re-index รูปที่เหลือ (เลื่อน idx คนหลัง idx ที่ลบ)
+    for (let i = idx; i < list.length; i++) {
+      const oldKey = `student_${grade}_${i + 1}`;
+      const newKey = `student_${grade}_${i}`;
+      const img    = await dbGetImage(oldKey).catch(() => null);
+      if (img) {
+        await dbSetImage(newKey, img).catch(() => {});
+        await dbDeleteImage(oldKey).catch(() => {});
+      } else {
+        await dbDeleteImage(newKey).catch(() => {});
+      }
+    }
+
+    await renderAll();
     showToast('🗑️ ลบนักเรียนแล้ว');
   }
 
@@ -813,14 +857,20 @@
   let pendingAvatarBase64 = null;
 
   function previewAvatar(input) {
-    if (!isAdmin) return;   // double-guard
+    if (!isAdmin) return;
     const file = input.files[0];
     if (!file) return;
+
+    // แสดง loading
+    const wrap = document.getElementById('avatarPreviewWrap');
+    wrap.innerHTML = '<span style="font-size:.65rem">กำลังโหลด...</span>';
+
     const reader = new FileReader();
-    reader.onload = e => {
-      pendingAvatarBase64 = e.target.result;
-      const wrap = document.getElementById('avatarPreviewWrap');
-      wrap.innerHTML = `<img src="${pendingAvatarBase64}" alt="preview"/>`;
+    reader.onload = async (e) => {
+      // compress ก่อนแสดง preview
+      const compressed = await compressImage(e.target.result, 400, 0.75);
+      pendingAvatarBase64 = compressed;
+      wrap.innerHTML = `<img src="${compressed}" alt="preview"/>`;
     };
     reader.readAsDataURL(file);
   }
@@ -852,8 +902,11 @@
     const data    = loadStudents();
     const student = (data[String(grade)] || [])[idx] || {};
 
-    pendingVote = { btn, grade: parseInt(grade), idx, name, img: student.img || null, room: student.room || '' };
-    openConfirm();
+    // ดึงรูปจาก IndexedDB แล้วค่อยเปิด modal
+    dbGetImage(`student_${grade}_${idx}`).catch(() => null).then(img => {
+      pendingVote = { btn, grade: parseInt(grade), idx, name, img: img || null, room: student.room || '' };
+      openConfirm();
+    });
   }
 
   function openConfirm() {
