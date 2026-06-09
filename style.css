@@ -5,12 +5,12 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Sarabun', sans-serif;
     background: linear-gradient(
 135deg,
-#0F172A 0%,
-#1E3A8A 50%,
-#2563EB 100%
+#14532d 0%,
+#15803d 50%,
+#facc15 100%
 );
     min-height: 100vh;
     padding: 20px;
@@ -31,12 +31,12 @@ body {
 header {
     text-align: center;
     margin-bottom: 40px;
-    border-bottom: 3px solid #667eea;
+    border-bottom: 3px solid #15803d;
     padding-bottom: 20px;
 }
 
 header h1 {
-    color: #667eea;
+    color: #15803d;
     font-size: 2.5em;
     margin-bottom: 10px;
 }

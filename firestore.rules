@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Check if the user is an admin
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/admin).data.uid == request.auth.uid;
+    }
+
+    // Candidates: Anyone can read, only Admin can write/edit/delete
+    match /candidates/{candidateId} {
+      allow read: if true;
+      allow write, update, delete: if request.auth != null && isAdmin();
+    }
+
+    // Votes: User can create a vote once (using their studentID as doc name)
+    match /votes/{studentID} {
+      allow read: if request.auth != null && (request.auth.token.email.split('@')[0] == studentID || isAdmin());
+      allow create: if request.auth != null && 
+                    request.auth.token.email.split('@')[0] == studentID && 
+                    !exists(/databases/$(database)/documents/votes/$(studentID));
+      allow update, delete: if false; // No changing or deleting votes
+    }
+
+    // Users: Users can read/write their own data, Admin can read all
+    match /users/{userId} {
+      allow read, write: if request.auth != null && (request.auth.token.email.split('@')[0] == userId || isAdmin());
+    }
+
+    // System Settings: Anyone can read, only Admin can write
+    match /system/settings {
+      allow read: if true;
+      allow write: if request.auth != null && isAdmin();
+    }
+  }
+}

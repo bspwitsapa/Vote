@@ -1,0 +1,118 @@
+/* 
+  BSPWIT-themed Color Variables (Green & Yellow)
+  Green: #15803d
+  Dark Green: #14532d
+  Yellow: #facc15
+*/
+
+:root {
+  --bspwit-green: #15803d;
+  --bspwit-green-hover: #166534;
+  --bspwit-dark-green: #14532d;
+  --bspwit-yellow: #facc15;
+  --bspwit-yellow-hover: #eab308;
+  --bspwit-dark: #064e3b;
+  --bspwit-gray: #F4F4F4;
+  --bspwit-text: #333333;
+  --bspwit-white: #FFFFFF;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Sarabun', sans-serif;
+  background-color: var(--bspwit-gray);
+  color: var(--bspwit-text);
+  line-height: 1.6;
+}
+
+/* Common Components */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.btn-primary {
+  background-color: var(--bspwit-green);
+  color: var(--bspwit-white);
+}
+
+.btn-primary:hover {
+  background-color: var(--bspwit-green-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background-color: var(--bspwit-yellow);
+  color: var(--bspwit-dark);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bspwit-yellow-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.card {
+  background: var(--bspwit-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+.input-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+.input-group input, .input-group select, .input-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #DDD;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+  border-color: var(--bspwit-green);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
