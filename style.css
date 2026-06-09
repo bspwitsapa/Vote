@@ -605,3 +605,34 @@ table tr:hover {
         padding: 12px;
     }
 }
+
+.hero-logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+.hero-logos .logo {
+  margin-bottom: 0;  /* override margin เดิม */
+}
+
+/* โลโก้สองอันเรียงแถว */
+.hero-logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 14px;
+}
+
+/* ล้าง margin เดิมของ .logo เพราะ hero-logos จัดการแล้ว */
+.hero-logos .logo {
+  margin-bottom: 0;
+}
+
+/* โลโก้ SAPA — ตัดพื้นหลังดำออก */
+.hero img.logo.sapa {
+  mix-blend-mode: screen;
+  background: transparent;
+}
