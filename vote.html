@@ -20,6 +20,7 @@
       --divider:      #CBD5E1;
       --purple:       #7C3AED;
       --purple-dark:  #5B21B6;
+      --danger:       #DC2626;
     }
 
     html { scroll-behavior: smooth; }
@@ -45,13 +46,13 @@
     header h1 { font-size: 1.45rem; font-weight: 800; color: #fff; letter-spacing: .02em; }
     header p  { font-size: .82rem; color: #94B4D4; margin-top: 3px; }
 
-    /* ── ADMIN TOGGLE ── */
-    .admin-toggle-bar {
+    /* ── USER BAR ── */
+    .user-bar {
       background: var(--card);
       border-bottom: 1px solid var(--divider);
       padding: 10px 20px;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
       gap: 10px;
       position: sticky;
@@ -59,6 +60,34 @@
       z-index: 98;
     }
 
+    .user-info {
+      font-size: .82rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .user-info span {
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .bar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* admin badge */
+    .admin-badge {
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: #EDE9FE;
+      color: var(--purple);
+      border: 1.5px solid #C4B5FD;
+    }
+
+    /* toggle admin panel btn */
     #adminToggleBtn {
       font-family: 'Sarabun', sans-serif;
       font-size: .78rem;
@@ -76,6 +105,21 @@
       background: var(--purple);
       color: #fff;
     }
+
+    /* logout btn */
+    .btn-logout {
+      font-family: 'Sarabun', sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid #FCA5A5;
+      background: #fff;
+      color: var(--danger);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-logout:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
 
     /* ── ADMIN PANEL ── */
     #adminPanel {
@@ -118,16 +162,12 @@
     .form-group input:focus,
     .form-group select:focus { border-color: var(--purple); }
 
-    /* avatar upload preview */
     .avatar-upload-wrap {
-      width: 68px;
-      height: 68px;
+      width: 68px; height: 68px;
       border-radius: 50%;
       border: 2px dashed #A78BFA;
       background: #EDE9FE;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       cursor: pointer;
       overflow: hidden;
       flex-shrink: 0;
@@ -216,7 +256,6 @@
       margin-bottom: 22px;
     }
 
-    /* ── EMPTY STATE ── */
     .empty-state {
       color: var(--muted);
       font-size: .82rem;
@@ -244,7 +283,7 @@
     }
     .student-card:hover { transform: translateY(-5px); box-shadow: 0 10px 28px rgba(15,27,45,.13); }
 
-    /* delete button (admin only) */
+    /* delete button — แสดงเฉพาะเมื่อ admin panel เปิด */
     .btn-delete {
       position: absolute;
       top: 8px; right: 8px;
@@ -252,28 +291,27 @@
       border-radius: 50%;
       border: none;
       background: #FEE2E2;
-      color: #DC2626;
+      color: var(--danger);
       font-size: .78rem;
       cursor: pointer;
-      display: none;
+      display: none;            /* ซ่อนอยู่เสมอ */
       align-items: center;
       justify-content: center;
       transition: background .2s;
     }
     .btn-delete:hover { background: #FCA5A5; }
+
+    /* เปิดเมื่อ body มี class admin-open (admin เปิด panel เท่านั้น) */
     body.admin-open .btn-delete { display: flex; }
 
     .avatar-wrap {
-      width: 120px;
-      height: 120px;
+      width: 120px; height: 120px;
       border-radius: 50%;
       margin: 0 auto 14px;
       overflow: hidden;
       border: 4px solid #E2EAF4;
       background: #E8F0FE;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
     .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .avatar-wrap svg { width: 72px; height: 72px; opacity: .5; }
@@ -299,7 +337,155 @@
     }
     .btn-vote:hover  { opacity: .88; transform: scale(1.03); }
     .btn-vote:active { opacity: 1;   transform: scale(.97); }
-    .btn-vote.voted  { background: linear-gradient(135deg, #6B7E96 0%, #4A5568 100%); box-shadow: none; cursor: default; }
+    .btn-vote.voted  {
+      background: linear-gradient(135deg, #6B7E96 0%, #4A5568 100%);
+      box-shadow: none; cursor: default;
+    }
+
+    /* ── CONFIRM MODAL ── */
+    #confirmOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,27,45,.65);
+      backdrop-filter: blur(5px);
+      z-index: 600;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #confirmOverlay.show { display: flex; }
+
+    .confirm-box {
+      background: #fff;
+      border-radius: 22px;
+      padding: 36px 32px 28px;
+      text-align: center;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      animation: popIn .25s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn {
+      from { transform: scale(.85); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .confirm-avatar {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      overflow: hidden;
+      border: 4px solid #E2EAF4;
+      background: #E8F0FE;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .confirm-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .confirm-avatar svg { width: 54px; height: 54px; opacity: .5; }
+
+    .confirm-box h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+    .confirm-box .confirm-name {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--emerald);
+      margin-bottom: 4px;
+    }
+    .confirm-box .confirm-class {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .confirm-warn {
+      font-size: .8rem;
+      color: #B45309;
+      background: #FEF3C7;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin: 14px 0 20px;
+      line-height: 1.5;
+    }
+    .confirm-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .btn-confirm-yes {
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%);
+      color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(16,185,129,.3);
+      transition: opacity .18s, transform .15s;
+    }
+    .btn-confirm-yes:hover { opacity: .88; transform: scale(1.03); }
+
+    .btn-confirm-no {
+      padding: 12px;
+      border: 1.5px solid var(--divider);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--muted);
+      font-family: 'Sarabun', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .18s;
+    }
+    .btn-confirm-no:hover { background: #F1F5F9; color: var(--text); }
+
+    /* ── NOT-LOGGED-IN OVERLAY ── */
+    #gateOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,27,45,.7);
+      backdrop-filter: blur(6px);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #gateOverlay.show { display: flex; }
+
+    .gate-box {
+      background: #fff;
+      border-radius: 22px;
+      padding: 40px 36px;
+      text-align: center;
+      max-width: 360px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+    .gate-box .gate-icon { font-size: 2.4rem; margin-bottom: 14px; }
+    .gate-box h2 { font-size: 1.15rem; font-weight: 800; color: var(--blue); margin-bottom: 8px; }
+    .gate-box p  { font-size: .88rem; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+
+    .btn-go-login {
+      display: inline-block;
+      padding: 13px 32px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+      color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(37,99,235,.35);
+      transition: opacity .18s, transform .15s;
+    }
+    .btn-go-login:hover { opacity: .9; transform: translateY(-2px); }
 
     /* ── TOAST ── */
     #toast {
@@ -335,6 +521,7 @@
       .avatar-wrap { width: 90px; height: 90px; }
       .avatar-wrap svg { width: 54px; height: 54px; }
       header h1 { font-size: 1.2rem; }
+      .user-bar { flex-wrap: wrap; }
     }
   </style>
 </head>
@@ -345,33 +532,35 @@
   <p>เลือกนักเรียนที่คุณต้องการโหวตในแต่ละระดับชั้น</p>
 </header>
 
-<!-- Admin toggle bar -->
-<div class="admin-toggle-bar">
-  <span style="font-size:.75rem; color:var(--muted);">โหมดผู้ดูแล</span>
-  <button id="adminToggleBtn" onclick="toggleAdmin()">⚙️ เพิ่มนักเรียน</button>
+<!-- User / Admin bar -->
+<div class="user-bar" id="userBar">
+  <div class="user-info" id="userInfoText">กำลังโหลด...</div>
+  <div class="bar-right">
+    <!-- แสดง badge + ปุ่ม panel เฉพาะ admin (JS inject) -->
+    <div id="adminControls" style="display:none; align-items:center; gap:10px;">
+      <span class="admin-badge">👨‍🏫 ผู้ดูแลระบบ</span>
+      <button id="adminToggleBtn" onclick="toggleAdminPanel()">⚙️ จัดการนักเรียน</button>
+    </div>
+    <button class="btn-logout" onclick="doLogout()">ออกจากระบบ</button>
+  </div>
 </div>
 
-<!-- Admin panel -->
+<!-- Admin panel — เฉพาะ admin เท่านั้นที่จะเห็น (JS toggle) -->
 <div id="adminPanel">
-  <h3>➕ เพิ่มการ์ดนักเรียน</h3>
+  <h3>➕ เพิ่มนักเรียน</h3>
   <div class="admin-form-grid">
-
-    <!-- avatar upload -->
     <div class="form-group">
       <label>รูปภาพ</label>
-      <div class="avatar-upload-wrap" id="avatarPreviewWrap" onclick="document.getElementById('avatarFileInput').click()">
+      <div class="avatar-upload-wrap" id="avatarPreviewWrap"
+           onclick="document.getElementById('avatarFileInput').click()">
         <span>แตะเพื่อ<br>เลือกรูป</span>
       </div>
       <input type="file" id="avatarFileInput" accept="image/*" onchange="previewAvatar(this)"/>
     </div>
-
-    <!-- name -->
     <div class="form-group">
       <label>ชื่อ-นามสกุล</label>
       <input type="text" id="inputName" placeholder="เช่น สมชาย ใจดี"/>
     </div>
-
-    <!-- grade -->
     <div class="form-group">
       <label>ระดับชั้น (ม.)</label>
       <select id="inputGrade">
@@ -384,19 +573,14 @@
         <option value="6">ม.6</option>
       </select>
     </div>
-
-    <!-- room -->
     <div class="form-group">
       <label>ห้อง</label>
       <input type="text" id="inputRoom" placeholder="เช่น 1, 2, 3"/>
     </div>
-
-    <!-- submit -->
     <div class="form-group">
       <label>&nbsp;</label>
       <button class="btn-add" onclick="addStudent()">+ เพิ่มนักเรียน</button>
     </div>
-
   </div>
 </div>
 
@@ -405,12 +589,38 @@
 
 <main id="main"></main>
 
+<!-- Confirm vote modal -->
+<div id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-avatar" id="confirmAvatar"></div>
+    <h3>ยืนยันการโหวต?</h3>
+    <div class="confirm-name" id="confirmName"></div>
+    <div class="confirm-class" id="confirmClass"></div>
+    <div class="confirm-warn">⚠️ คุณมีสิทธิ์โหวตได้เพียง <strong>1 ครั้ง</strong> เท่านั้น<br>เมื่อยืนยันแล้วไม่สามารถเปลี่ยนแปลงได้</div>
+    <div class="confirm-actions">
+      <button class="btn-confirm-no"  onclick="closeConfirm()">ยกเลิก</button>
+      <button class="btn-confirm-yes" onclick="confirmVote()">✔ ยืนยันโหวต</button>
+    </div>
+  </div>
+</div>
+
+<!-- Gate overlay (ถ้าไม่ได้ login) -->
+<div id="gateOverlay">
+  <div class="gate-box">
+    <div class="gate-icon">🔒</div>
+    <h2>กรุณาเข้าสู่ระบบก่อน</h2>
+    <p>คุณต้องเข้าสู่ระบบด้วยบัญชีนักเรียนก่อน<br>จึงจะสามารถโหวตได้</p>
+    <a class="btn-go-login" href="index.html">ไปหน้าเข้าสู่ระบบ</a>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
-  // ── STATE ─────────────────────────────────────────────────────────────────
-  const GRADES = [1,2,3,4,5,6];
-  const STORAGE_KEY = 'voteStudents';
+  // ── CONSTANTS ──────────────────────────────────────────────────────────────
+  const GRADES      = [1,2,3,4,5,6];
+  const STORAGE_KEY = 'voteStudents';   // ข้อมูลการ์ดนักเรียน
+  const VOTED_KEY   = 'votedNames';     // บันทึกว่า user นี้โหวตใครแล้ว
 
   const avatarColors = [
     ['#DBEAFE','#3B82F6'], ['#FCE7F3','#EC4899'],
@@ -418,7 +628,46 @@
     ['#EDE9FE','#8B5CF6'], ['#FFE4E6','#F43F5E'],
   ];
 
-  // โหลดข้อมูลจาก localStorage หรือเริ่มต้นว่าง
+  // ── SESSION CHECK ──────────────────────────────────────────────────────────
+  let currentUser = null;
+  let isAdmin     = false;
+
+  (function checkSession() {
+    const raw = sessionStorage.getItem('currentUser');
+    if (!raw) {
+      // ไม่มี session → แสดง overlay บังคับ login
+      document.getElementById('gateOverlay').classList.add('show');
+      document.getElementById('userInfoText').textContent = 'ยังไม่ได้เข้าสู่ระบบ';
+      return;
+    }
+
+    try {
+      currentUser = JSON.parse(raw);
+    } catch {
+      sessionStorage.removeItem('currentUser');
+      document.getElementById('gateOverlay').classList.add('show');
+      return;
+    }
+
+    isAdmin = currentUser.isAdmin === true;
+
+    // แสดงชื่อผู้ใช้
+    const infoEl = document.getElementById('userInfoText');
+    if (isAdmin) {
+      infoEl.innerHTML = 'เข้าสู่ระบบในฐานะ <span>ผู้ดูแลระบบ</span>';
+    } else {
+      infoEl.innerHTML = `เข้าสู่ระบบ: <span>${currentUser.name || currentUser.studentID}</span>
+                          &nbsp;|&nbsp; ม.${currentUser.grade}/${currentUser.room}`;
+    }
+
+    // แสดงปุ่มจัดการเฉพาะ admin
+    if (isAdmin) {
+      const ctrl = document.getElementById('adminControls');
+      ctrl.style.display = 'flex';
+    }
+  })();
+
+  // ── STORAGE HELPERS ────────────────────────────────────────────────────────
   function loadStudents() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
     catch { return {}; }
@@ -428,20 +677,28 @@
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
-  let pendingAvatarBase64 = null;
+  // voted set เฉพาะ user คนนี้ (เก็บตาม studentID หรือ 'admin')
+  function getVotedSet() {
+    const uid = currentUser ? (currentUser.studentID || 'admin') : 'guest';
+    try { return new Set(JSON.parse(localStorage.getItem(`${VOTED_KEY}_${uid}`)) || []); }
+    catch { return new Set(); }
+  }
 
-  // ── BUILD SECTIONS ────────────────────────────────────────────────────────
+  function saveVotedSet(set) {
+    const uid = currentUser ? (currentUser.studentID || 'admin') : 'guest';
+    localStorage.setItem(`${VOTED_KEY}_${uid}`, JSON.stringify([...set]));
+  }
+
+  // ── BUILD GRADE SECTIONS ───────────────────────────────────────────────────
   const navEl  = document.getElementById('gradeNav');
   const mainEl = document.getElementById('main');
 
   GRADES.forEach(g => {
-    // nav pill
     const a = document.createElement('a');
     a.href = `#grade-${g}`;
     a.textContent = `ม.${g}`;
     navEl.appendChild(a);
 
-    // section skeleton
     const sec = document.createElement('section');
     sec.className = 'grade-section';
     sec.id = `grade-${g}`;
@@ -458,18 +715,18 @@
 
   // ── RENDER ALL ────────────────────────────────────────────────────────────
   function renderAll() {
-    const data = loadStudents();
+    const data         = loadStudents();
+    const alreadyVoted = hasUsedVote();
+
     GRADES.forEach(g => {
+      const key   = String(g);             // ใช้ string key เสมอให้ตรงกับ JSON
       const grid  = document.getElementById(`grid-${g}`);
       const empty = document.getElementById(`empty-${g}`);
-      const list  = data[g] || [];
+      const list  = data[key] || [];
 
       grid.innerHTML = '';
 
-      if (list.length === 0) {
-        empty.style.display = 'block';
-        return;
-      }
+      if (list.length === 0) { empty.style.display = 'block'; return; }
       empty.style.display = 'none';
 
       const [bgCol, accentCol] = avatarColors[g - 1];
@@ -479,28 +736,39 @@
         card.className = 'student-card';
 
         const avatarInner = s.img
-          ? `<img src="${s.img}" alt="${s.name}"/>`
+          ? `<img src="${s.img}" alt="avatar"/>`
           : `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                <circle cx="24" cy="18" r="9" fill="${accentCol}"/>
                <path d="M6 42c0-9.94 8.06-18 18-18s18 8.06 18 18" fill="${accentCol}"/>
              </svg>`;
 
+        // encode ชื่อเป็น JSON เพื่อหลีกเลี่ยงปัญหา apostrophe ในชื่อ
+        const safeName = JSON.stringify(s.name);
+
+        const disabledAttr = alreadyVoted ? 'disabled' : '';
+        const styleAttr    = alreadyVoted ? 'style="opacity:.45" title="คุณใช้สิทธิ์โหวตไปแล้ว"' : '';
+
         card.innerHTML = `
-          <button class="btn-delete" title="ลบนักเรียน" onclick="deleteStudent(${g}, ${idx})">✕</button>
+          <button class="btn-delete" title="ลบนักเรียน"
+                  onclick="deleteStudent(${g}, ${idx})">✕</button>
           <div class="avatar-wrap" style="background:${bgCol}; border-color:${bgCol};">
             ${avatarInner}
           </div>
           <div class="student-name">${s.name}</div>
           <div class="student-class">ม.${g}/${s.room}</div>
-          <button class="btn-vote" onclick="handleVote(this, '${s.name}')">🗳️ Vote</button>
+          <button class="btn-vote"
+                  onclick="handleVote(this, ${g}, ${idx}, ${safeName})"
+                  ${disabledAttr} ${styleAttr}>🗳️ Vote</button>
         `;
         grid.appendChild(card);
       });
     });
   }
 
-  // ── ADD STUDENT ───────────────────────────────────────────────────────────
+  // ── ADD STUDENT (admin only) ──────────────────────────────────────────────
   function addStudent() {
+    if (!isAdmin) { showToast('⛔ เฉพาะผู้ดูแลระบบเท่านั้น', true); return; }
+
     const name  = document.getElementById('inputName').value.trim();
     const grade = document.getElementById('inputGrade').value;
     const room  = document.getElementById('inputRoom').value.trim();
@@ -510,15 +778,10 @@
     if (!room)  { showToast('⚠️ กรุณากรอกห้อง', true); return; }
 
     const data = loadStudents();
-    const g    = parseInt(grade);
+    const g    = String(parseInt(grade));   // บังคับ string key เสมอ
     if (!data[g]) data[g] = [];
 
-    data[g].push({
-      name,
-      room,
-      img: pendingAvatarBase64 || null,
-    });
-
+    data[g].push({ name, room, img: pendingAvatarBase64 || null });
     saveStudents(data);
     renderAll();
 
@@ -533,18 +796,24 @@
     showToast(`✅ เพิ่ม "${name}" ใน ม.${g} แล้ว`);
   }
 
-  // ── DELETE STUDENT ────────────────────────────────────────────────────────
+  // ── DELETE STUDENT (admin only) ───────────────────────────────────────────
   function deleteStudent(grade, idx) {
+    if (!isAdmin) { showToast('⛔ เฉพาะผู้ดูแลระบบเท่านั้น', true); return; }
     if (!confirm('ต้องการลบนักเรียนคนนี้?')) return;
+
     const data = loadStudents();
-    data[grade].splice(idx, 1);
+    const key  = String(grade);
+    if (data[key]) data[key].splice(idx, 1);
     saveStudents(data);
     renderAll();
     showToast('🗑️ ลบนักเรียนแล้ว');
   }
 
-  // ── AVATAR PREVIEW ────────────────────────────────────────────────────────
+  // ── AVATAR PREVIEW (admin only) ──────────────────────────────────────────
+  let pendingAvatarBase64 = null;
+
   function previewAvatar(input) {
+    if (!isAdmin) return;   // double-guard
     const file = input.files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -556,26 +825,108 @@
     reader.readAsDataURL(file);
   }
 
-  // ── VOTE ──────────────────────────────────────────────────────────────────
-  function handleVote(btn, name) {
+  // ── VOTE — 1 บัญชี 1 สิทธิ์ ────────────────────────────────────────────
+  // ใช้ key เดียว 'VOTED_ONCE_<uid>' เก็บว่าโหวตไปแล้วหรือยัง
+  function hasUsedVote() {
+    const uid = currentUser ? (currentUser.studentID || 'admin') : 'guest';
+    return localStorage.getItem(`VOTED_ONCE_${uid}`) === '1';
+  }
+
+  function markVoteUsed() {
+    const uid = currentUser ? (currentUser.studentID || 'admin') : 'guest';
+    localStorage.setItem(`VOTED_ONCE_${uid}`, '1');
+  }
+
+  // ข้อมูลที่รอยืนยัน
+  let pendingVote = null;   // { btn, grade, idx, name, img, room }
+
+  function handleVote(btn, grade, idx, name) {
+    if (!currentUser) { showToast('⛔ กรุณาเข้าสู่ระบบก่อน', true); return; }
     if (btn.classList.contains('voted')) return;
+
+    if (hasUsedVote()) {
+      showToast('⛔ คุณใช้สิทธิ์โหวตไปแล้ว ไม่สามารถโหวตซ้ำได้', true);
+      return;
+    }
+
+    const data    = loadStudents();
+    const student = (data[String(grade)] || [])[idx] || {};
+
+    pendingVote = { btn, grade: parseInt(grade), idx, name, img: student.img || null, room: student.room || '' };
+    openConfirm();
+  }
+
+  function openConfirm() {
+    const { name, grade, room, img } = pendingVote;
+    const colorIdx = parseInt(grade) - 1;
+    const [bgCol, accentCol] = avatarColors[colorIdx] || avatarColors[0];
+
+    // avatar
+    const avatarEl = document.getElementById('confirmAvatar');
+    avatarEl.style.background   = bgCol;
+    avatarEl.style.borderColor  = bgCol;
+    avatarEl.innerHTML = img
+      ? `<img src="${img}" alt="${name}"/>`
+      : `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+           <circle cx="24" cy="18" r="9" fill="${accentCol}"/>
+           <path d="M6 42c0-9.94 8.06-18 18-18s18 8.06 18 18" fill="${accentCol}"/>
+         </svg>`;
+
+    document.getElementById('confirmName').textContent  = name;
+    document.getElementById('confirmClass').textContent = `ม.${grade}/${room}`;
+    document.getElementById('confirmOverlay').classList.add('show');
+  }
+
+  function closeConfirm() {
+    pendingVote = null;
+    document.getElementById('confirmOverlay').classList.remove('show');
+  }
+
+  function confirmVote() {
+    if (!pendingVote) return;
+    const { btn, grade, idx, name } = pendingVote;
+
+    // บันทึกว่าบัญชีนี้โหวตแล้ว (1 สิทธิ์)
+    markVoteUsed();
+
+    // อัปเดต UI การ์ดทั้งหมด — disable ปุ่มโหวตทุกใบ
+    document.querySelectorAll('.btn-vote').forEach(b => {
+      if (!b.classList.contains('voted')) {
+        b.disabled = true;
+        b.style.opacity = '.45';
+        b.title = 'คุณใช้สิทธิ์โหวตไปแล้ว';
+      }
+    });
+
     btn.classList.add('voted');
     btn.textContent = '✔ โหวตแล้ว';
     btn.disabled = true;
-    showToast(`✅ โหวตให้ "${name}" สำเร็จ!`);
+    btn.style.opacity = '';
+    btn.title = '';
+
+    closeConfirm();
+    showToast(`✅ โหวตให้ "${name}" สำเร็จ! ขอบคุณที่ร่วมโหวต`);
+    pendingVote = null;
   }
 
-  // ── ADMIN TOGGLE ──────────────────────────────────────────────────────────
-  function toggleAdmin() {
+  // ── ADMIN PANEL TOGGLE ────────────────────────────────────────────────────
+  function toggleAdminPanel() {
+    if (!isAdmin) return;
     const panel = document.getElementById('adminPanel');
     const btn   = document.getElementById('adminToggleBtn');
     const isOpen = panel.classList.toggle('open');
     btn.classList.toggle('active', isOpen);
     document.body.classList.toggle('admin-open', isOpen);
-    btn.textContent = isOpen ? '✕ ปิดโหมดAdmin' : '⚙️ เพิ่มนักเรียน';
+    btn.textContent = isOpen ? '✕ ปิดโหมดจัดการ' : '⚙️ จัดการนักเรียน';
   }
 
-  // ── TOAST ─────────────────────────────────────────────────────────────────
+  // ── LOGOUT ────────────────────────────────────────────────────────────────
+  function doLogout() {
+    sessionStorage.removeItem('currentUser');
+    window.location.href = 'index.html';
+  }
+
+  // ── TOAST ──────────────────────────────────────────────────────────────────
   let toastTimer;
   const toastEl = document.getElementById('toast');
 
