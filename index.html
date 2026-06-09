@@ -10,7 +10,7 @@
     <div class="container">
         <header class="hero">
     <img src="logo.png" class="school-logo">
-    <h1>🏆 ระบบโหวตนักเรียนดีเป็นศรีบว.</h1>
+    <h1>🏆 ระบบโหวตนักเรียนดีเป็นศรีบางสะพาน.</h1>
     <p>Outstanding Student Voting System</p>
 
     <div class="hero-badge">
@@ -88,16 +88,6 @@
                 <span id="currentUserDisplay">ผู้ใช้: -</span>
                 <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
             </div>
-            <h2>เลือกชั้นเรียน</h2>
-            <div class="grade-buttons">
-                <button class="grade-btn" onclick="selectGrade(1)">ม.1</button>
-                <button class="grade-btn" onclick="selectGrade(2)">ม.2</button>
-                <button class="grade-btn" onclick="selectGrade(3)">ม.3</button>
-                <button class="grade-btn" onclick="selectGrade(4)">ม.4</button>
-                <button class="grade-btn" onclick="selectGrade(5)">ม.5</button>
-                <button class="grade-btn" onclick="selectGrade(6)">ม.6</button>
-            </div>
-        </div>
 
         <!-- หน้าเลือกห้อง -->
         <div id="classroomSelection" class="section hidden">
@@ -171,15 +161,6 @@
                 </select>
                 <input type="file" id="imageUpload" accept="image/*">
                 <button class="btn-primary" onclick="uploadClassroomImage()">อัพโหลดรูป</button>
-            </div>
-
-            <div class="admin-form">
-                <h4>📋 สร้างการโหวต</h4>
-                <input type="text" id="pollTitle" placeholder="หัวข้อการโหวต" required>
-                <textarea id="pollDescription" placeholder="คำอธิบาย"></textarea>
-                <div id="pollOptionsInput"></div>
-                <button class="btn-primary" onclick="addPollOption()">+ เพิ่มตัวเลือก</button>
-                <button class="btn-primary" onclick="createPoll()">สร้างการโหวต</button>
             </div>
 
             <div class="admin-form">
