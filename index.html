@@ -10,11 +10,78 @@
     <div class="container">
         <header>
             <h1>🗳️ ระบบโหวตนักเรียน</h1>
-            <p>เลือกชั้นเรียนและห้องของคุณ</p>
+            <p>ลงทะเบียนและเข้าสู่ระบบ</p>
         </header>
 
-        <!-- หน้าเลือกชั้น -->
-        <div id="gradeSelection" class="section">
+        <!-- หน้า Login นักเรียน (เป็นหน้าแรก) -->
+        <div id="studentLoginPage" class="section">
+            <div class="login-form-container">
+                <h2>เข้าสู่ระบบ - นักเรียน</h2>
+                <div class="login-form">
+                    <h3>เลือกประเภท</h3>
+                    <div class="login-tabs">
+                        <button class="tab-btn active" onclick="switchStudentTab('register')">ลงทะเบียน</button>
+                        <button class="tab-btn" onclick="switchStudentTab('login')">เข้าสู่ระบบ</button>
+                    </div>
+
+                    <!-- ฟอร์มลงทะเบียน -->
+                    <div id="registerForm" class="tab-content active">
+                        <h4>ลงทะเบียนเป็นสมาชิก</h4>
+                        <input type="text" id="regStudentID" placeholder="เลขประจำตัวนักเรียน" required>
+                        <input type="text" id="regName" placeholder="ชื่อ-นามสกุล" required>
+                        <select id="regGrade" required>
+                            <option value="">เลือกชั้น</option>
+                            <option value="1">ม.1</option>
+                            <option value="2">ม.2</option>
+                            <option value="3">ม.3</option>
+                            <option value="4">ม.4</option>
+                            <option value="5">ม.5</option>
+                            <option value="6">ม.6</option>
+                        </select>
+                        <select id="regClassroom" required>
+                            <option value="">เลือกห้อง</option>
+                        </select>
+                        <input type="password" id="regPassword" placeholder="รหัสผ่าน" required>
+                        <input type="password" id="regPasswordConfirm" placeholder="ยืนยันรหัสผ่าน" required>
+                        <button class="btn-primary" onclick="registerStudent()">ลงทะเบียน</button>
+                    </div>
+
+                    <!-- ฟอร์มเข���าสู่ระบบ -->
+                    <div id="loginForm" class="tab-content hidden">
+                        <h4>เข้าสู่ระบบ</h4>
+                        <input type="text" id="loginStudentID" placeholder="เลขประจำตัวนักเรียน" required>
+                        <input type="password" id="loginPassword" placeholder="รหัสผ่าน" required>
+                        <button class="btn-primary" onclick="studentLogin()">เข้าสู่ระบบ</button>
+                    </div>
+                </div>
+
+                <!-- ปุ่ม Admin -->
+                <div style="text-align: center; margin-top: 30px; border-top: 2px solid #ddd; padding-top: 20px;">
+                    <p style="color: #666; margin-bottom: 15px;">สำหรับผู้ดูแลระบบ</p>
+                    <button class="admin-btn" onclick="goToAdminLogin()">👨‍🏫 ผู้ดูแลระบบ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- หน้า Login Admin -->
+        <div id="adminLoginPage" class="section hidden">
+            <button class="back-btn" onclick="backToStudentLogin()">← กลับ</button>
+            <div class="login-form-container">
+                <h2>เข้าสู่ระบบ - ผู้ดูแลระบบ</h2>
+                <div class="login-form">
+                    <h4>กรุณากรอกรหัสผ่าน</h4>
+                    <input type="password" id="adminPassword" placeholder="รหัสผ่าน Admin" required>
+                    <button class="btn-primary" onclick="adminLogin()">เข้าสู่ระบบ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- หน้าเลือกชั้น (นักเรียน) -->
+        <div id="gradeSelection" class="section hidden">
+            <div class="logout-bar">
+                <span id="currentUserDisplay">ผู้ใช้: -</span>
+                <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
+            </div>
             <h2>เลือกชั้นเรียน</h2>
             <div class="grade-buttons">
                 <button class="grade-btn" onclick="selectGrade(1)">ม.1</button>
@@ -43,14 +110,6 @@
                 <h2>ห้อง <span id="classroomNumberDisplay"></span> ม.<span id="gradeNumberDisplay"></span></h2>
             </div>
 
-            <!-- ฟอร์มป้อนข้อมูลนักเรียน -->
-            <div class="student-form">
-                <h3>ป้อนข้อมูลนักเรียน</h3>
-                <input type="text" id="studentName" placeholder="ชื่อ-นามสกุล" required>
-                <input type="text" id="studentID" placeholder="เลขที่นักเรียน" required>
-                <button class="btn-primary" onclick="verifyStudent()">ตรวจสอบ</button>
-            </div>
-
             <!-- หน้าโหวต -->
             <div id="pollSection" class="hidden">
                 <h3>โปรดเลือกตัวเลือกของคุณ</h3>
@@ -73,45 +132,60 @@
                 <p>คุณได้โหวตในการโหวตนี้แล้ว ไม่สามารถโหวตอีกได้</p>
                 <button class="btn-primary" onclick="reset()">กลับหน้าแรก</button>
             </div>
+
+            <!-- ข้อความยังไม่มีการโหวต -->
+            <div id="noPolsMessage" class="hidden info-message">
+                <h3>ℹ️ ยังไม่มีการโหวต</h3>
+                <p>ยังไม่มีการโหวตในขณะนี้ โปรดกลับมาภายหลัง</p>
+                <button class="btn-primary" onclick="reset()">กลับหน้าแรก</button>
+            </div>
         </div>
 
         <!-- หน้าจัดการ (สำหรับครู) -->
-        <div class="admin-section">
-            <button class="admin-btn" onclick="toggleAdmin()">🔧 ผู้ดูแลระบบ</button>
-            <div id="adminPanel" class="hidden">
-                <h3>จัดการระบบโหวต</h3>
-                <div class="admin-form">
-                    <h4>อัพโหลดรูปห้อง</h4>
-                    <select id="adminGradeSelect" onchange="updateClassroomSelect()">
-                        <option value="">เลือกชั้น</option>
-                        <option value="1">ม.1</option>
-                        <option value="2">ม.2</option>
-                        <option value="3">ม.3</option>
-                        <option value="4">ม.4</option>
-                        <option value="5">ม.5</option>
-                        <option value="6">ม.6</option>
-                    </select>
-                    <select id="adminClassroomSelect">
-                        <option value="">เลือกห้อง</option>
-                    </select>
-                    <input type="file" id="imageUpload" accept="image/*">
-                    <button class="btn-primary" onclick="uploadClassroomImage()">อัพโหลดรูป</button>
-                </div>
+        <div id="adminPage" class="section hidden">
+            <div class="logout-bar">
+                <span style="font-weight: bold; color: #667eea;">👨‍🏫 ผู้ดูแลระบบ</span>
+                <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
+            </div>
+            <h2>จัดการระบบโหวต</h2>
 
-                <div class="admin-form">
-                    <h4>สร้างการโหวต</h4>
-                    <input type="text" id="pollTitle" placeholder="หัวข้อการโหวต" required>
-                    <textarea id="pollDescription" placeholder="คำอธิบาย"></textarea>
-                    <div id="pollOptionsInput"></div>
-                    <button class="btn-primary" onclick="addPollOption()">+ เพิ่มตัวเลือก</button>
-                    <button class="btn-primary" onclick="createPoll()">สร้างการโหวต</button>
-                </div>
+            <div class="admin-form">
+                <h4>📸 อัพโหลดรูปห้อง</h4>
+                <select id="adminGradeSelect" onchange="updateClassroomSelect()">
+                    <option value="">เลือกชั้น</option>
+                    <option value="1">ม.1</option>
+                    <option value="2">ม.2</option>
+                    <option value="3">ม.3</option>
+                    <option value="4">ม.4</option>
+                    <option value="5">ม.5</option>
+                    <option value="6">ม.6</option>
+                </select>
+                <select id="adminClassroomSelect">
+                    <option value="">เลือกห้อง</option>
+                </select>
+                <input type="file" id="imageUpload" accept="image/*">
+                <button class="btn-primary" onclick="uploadClassroomImage()">อัพโหลดรูป</button>
+            </div>
 
-                <div class="admin-form">
-                    <h4>ดูผลการโหวต</h4>
-                    <button class="btn-primary" onclick="showResults()">ดูผลลัพธ์</button>
-                    <div id="resultsDisplay"></div>
-                </div>
+            <div class="admin-form">
+                <h4>📋 สร้างการโหวต</h4>
+                <input type="text" id="pollTitle" placeholder="หัวข้อการโหวต" required>
+                <textarea id="pollDescription" placeholder="คำอธิบาย"></textarea>
+                <div id="pollOptionsInput"></div>
+                <button class="btn-primary" onclick="addPollOption()">+ เพิ่มตัวเลือก</button>
+                <button class="btn-primary" onclick="createPoll()">สร้างการโหวต</button>
+            </div>
+
+            <div class="admin-form">
+                <h4>📊 ดูผลการโหวต</h4>
+                <button class="btn-primary" onclick="showResults()">ดูผลลัพธ์</button>
+                <div id="resultsDisplay"></div>
+            </div>
+
+            <div class="admin-form">
+                <h4>👥 ดูรายชื่อนักเรียนที่ลงทะเบียน</h4>
+                <button class="btn-primary" onclick="showStudentList()">ดูรายชื่อ</button>
+                <div id="studentListDisplay"></div>
             </div>
         </div>
     </div>
