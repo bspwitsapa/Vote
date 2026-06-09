@@ -4,7 +4,22 @@ const STUDENTS_KEY = 'students';
 const VOTES_KEY = 'votes';
 const CLASSROOMS_KEY = 'classrooms';
 const POLL_KEY = 'currentPoll';
-const ADMIN_PASSWORD = 'admin123'; // รหัสผ่าน Admin
+const ADMIN_PASSWORD = 'admin123';
+
+// ===== Google Form ส่งข้อมูล =====
+// ต้องอัพเดทให้ตรงกับ Google Form ของคุณ
+const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
+
+// ชื่อ Field ใน Google Form (ให้แก้ให้ตรงกับ Form ของคุณ)
+const FORM_FIELDS = {
+    studentID: 'entry_1234567890',      // เลขประจำตัวนักเรียน
+    studentName: 'entry_1111111111',    // ชื่อ
+    grade: 'entry_2222222222',          // ชั้น
+    classroom: 'entry_3333333333',      // ห้อง
+    pollTitle: 'entry_4444444444',      // หัวข้อโหวต
+    pollOption: 'entry_5555555555',     // ตัวเลือก
+    timestamp: 'entry_6666666666'       // เวลา
+};
 
 // ข้อมูลคลาส
 const GRADES = 6;
@@ -14,7 +29,7 @@ const CLASSROOMS_PER_GRADE = 13;
 let currentGrade = null;
 let currentClassroom = null;
 let currentPoll = null;
-let currentUser = null; // {studentID, name, grade, classroom}
+let currentUser = null;
 let isAdminMode = false;
 let optionCount = 0;
 
@@ -56,25 +71,19 @@ function checkCurrentUser() {
 
 function showLoginPage() {
     hideAll();
-    document.getElementById('loginPage').classList.remove('hidden');
-}
-
-function goToStudentLogin() {
-    document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('studentLoginPage').classList.remove('hidden');
     document.getElementById('registerForm').classList.add('active');
     document.getElementById('loginForm').classList.add('hidden');
 }
 
-function goToAdminLogin() {
-    document.getElementById('loginPage').classList.add('hidden');
-    document.getElementById('adminLoginPage').classList.remove('hidden');
+function backToStudentLogin() {
+    document.getElementById('adminLoginPage').classList.add('hidden');
+    document.getElementById('studentLoginPage').classList.remove('hidden');
 }
 
-function backToRoleSelection() {
+function goToAdminLogin() {
     document.getElementById('studentLoginPage').classList.add('hidden');
-    document.getElementById('adminLoginPage').classList.add('hidden');
-    document.getElementById('loginPage').classList.remove('hidden');
+    document.getElementById('adminLoginPage').classList.remove('hidden');
 }
 
 // ═══ ระบบลงทะเบียนนักเรียน ═══
@@ -93,7 +102,6 @@ function switchStudentTab(tab) {
     }
 }
 
-// อัพเดทตัวเลือกห้องเมื่อเลือกชั้น (ในฟอร์มลงทะเบียน)
 document.addEventListener('change', (e) => {
     if (e.target.id === 'regGrade') {
         const grade = e.target.value;
@@ -119,7 +127,6 @@ function registerStudent() {
     const password = document.getElementById('regPassword').value;
     const passwordConfirm = document.getElementById('regPasswordConfirm').value;
 
-    // ตรวจสอบ
     if (!studentID || !name || !grade || !classroom || !password) {
         alert('กรุณากรอกข้อมูลให้ครบทั้งหมด');
         return;
@@ -137,13 +144,11 @@ function registerStudent() {
 
     const students = getStudents();
     
-    // ตรวจสอบว่ามีเลขประจำตัวนี้แล้วหรือไม่
     if (students[studentID]) {
         alert('เลขประจำตัวนี้ลงทะเบียนแล้ว');
         return;
     }
 
-    // บันทึกข้อมูล
     students[studentID] = {
         studentID,
         name,
@@ -156,7 +161,6 @@ function registerStudent() {
     saveStudents(students);
     alert('ลงทะเบียนสำเร็จ! โปรดเข้าสู่ระบบ');
     
-    // รีเซ็ตฟอร์มและสลับไปที่ฟอร์มเข้าสู่ระบบ
     document.getElementById('regStudentID').value = '';
     document.getElementById('regName').value = '';
     document.getElementById('regGrade').value = '';
@@ -189,7 +193,6 @@ function studentLogin() {
         return;
     }
 
-    // เข้าสู่ระบบสำเร็จ
     currentUser = {
         studentID: student.studentID,
         name: student.name,
@@ -200,7 +203,6 @@ function studentLogin() {
 
     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
     
-    // ล้างฟอร์ม
     document.getElementById('loginStudentID').value = '';
     document.getElementById('loginPassword').value = '';
     
@@ -220,7 +222,6 @@ function adminLogin() {
         return;
     }
 
-    // เข้าสู่ระบบ Admin สำเร็จ
     currentUser = {
         isAdmin: true
     };
@@ -245,7 +246,6 @@ function showAdminPage() {
 }
 
 function hideAll() {
-    document.getElementById('loginPage').classList.add('hidden');
     document.getElementById('studentLoginPage').classList.add('hidden');
     document.getElementById('adminLoginPage').classList.add('hidden');
     document.getElementById('gradeSelection').classList.add('hidden');
@@ -398,8 +398,7 @@ function submitVote() {
     const classroomKey = `${currentGrade}-${currentClassroom}`;
     const selectedOption = currentPoll.options[selected.value];
     
-    const votes = getVotes();
-    votes.push({
+    const voteData = {
         id: Date.now(),
         studentID: currentUser.studentID,
         name: currentUser.name,
@@ -407,12 +406,44 @@ function submitVote() {
         poll: currentPoll.id,
         option: selectedOption,
         timestamp: new Date().toISOString()
-    });
+    };
     
+    // บันทึกใน Local Storage
+    const votes = getVotes();
+    votes.push(voteData);
     saveVotes(votes);
+    
+    // ส่งข้อมูลไปยัง Google Sheet
+    sendToGoogleForm(voteData);
     
     document.getElementById('pollSection').classList.add('hidden');
     document.getElementById('voteSuccessMessage').classList.remove('hidden');
+}
+
+// ═══ ส่งข้อมูลไปยัง Google Form ═══
+function sendToGoogleForm(voteData) {
+    const formData = new FormData();
+    
+    formData.append(FORM_FIELDS.studentID, voteData.studentID);
+    formData.append(FORM_FIELDS.studentName, voteData.name);
+    formData.append(FORM_FIELDS.grade, currentGrade);
+    formData.append(FORM_FIELDS.classroom, currentClassroom);
+    formData.append(FORM_FIELDS.pollTitle, currentPoll.title);
+    formData.append(FORM_FIELDS.pollOption, voteData.option);
+    formData.append(FORM_FIELDS.timestamp, new Date().toLocaleString('th-TH'));
+    
+    // ส่งข้อมูลไปยัง Google Form (ใช้ CORS)
+    fetch(GOOGLE_FORM_URL, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors'
+    })
+    .then(() => {
+        console.log('ส่งข้อมูลไปยัง Google Sheet สำเร็จ');
+    })
+    .catch((error) => {
+        console.error('เกิดข้อผิดพลาด:', error);
+    });
 }
 
 function backToGrade() {
@@ -636,7 +667,6 @@ function showStudentList() {
 // ═══ ฟังก์ชันช่วย (Helper Functions) ═══
 
 function hashPassword(password) {
-    // Simple hash function (not for production!)
     return password.split('').reduce((acc, char) => {
         return acc + char.charCodeAt(0);
     }, 0).toString();
