@@ -1,182 +1,654 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบโหวตนักเรียน</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ระบบโหวตนักเรียนดีเป็นศรีบางสะพาน</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:    #0F1B2D;
+      --blue:    #1E3A5F;
+      --accent:  #2563EB;
+      --emerald: #10B981;
+      --bg:      #F0F5FB;
+      --card:    #FFFFFF;
+      --text:    #1A2940;
+      --muted:   #6B7E96;
+      --divider: #CBD5E1;
+      --danger:  #DC2626;
+      --warn-bg: #FEF2F2;
+    }
+
+    html, body {
+      min-height: 100vh;
+      font-family: 'Sarabun', sans-serif;
+      background: linear-gradient(135deg, var(--navy) 0%, #1E3A8A 55%, #2563EB 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card);
+      border-radius: 28px;
+      box-shadow: 0 28px 80px rgba(0,0,0,.38);
+      width: 100%;
+      max-width: 780px;
+      overflow: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      padding: 40px 40px 30px;
+      text-align: center;
+    }
+
+    .hero img.logo {
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 14px;
+      border: 4px solid rgba(255,255,255,.25);
+      box-shadow: 0 6px 24px rgba(0,0,0,.3);
+    }
+
+    .logo-placeholder {
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.15);
+      margin: 0 auto 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.6rem;
+      border: 4px solid rgba(255,255,255,.2);
+    }
+
+    .hero h1 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.4;
+    }
+
+    .hero p {
+      font-size: .95rem;
+      color: #94B4D4;
+      margin-top: 6px;
+    }
+
+    .hero-year {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: .82rem;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(255,255,255,.15);
+      border-radius: 20px;
+      padding: 5px 18px;
+      letter-spacing: .05em;
+    }
+
+    /* ── TABS ── */
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 2px solid var(--divider);
+    }
+
+    .tab-btn {
+      font-family: 'Sarabun', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 18px;
+      border: none;
+      background: #F8FAFC;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+    }
+
+    .tab-btn.active {
+      background: var(--card);
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ── FORM BODY ── */
+    .form-body {
+      padding: 36px 52px 44px;
+    }
+
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+
+    .form-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── FIELD ── */
+    .field { margin-bottom: 18px; }
+
+    .field label {
+      display: block;
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 7px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 1rem;
+      padding: 14px 16px;
+      border: 1.5px solid var(--divider);
+      border-radius: 12px;
+      color: var(--text);
+      background: #FAFBFC;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(37,99,235,.1);
+      background: #fff;
+    }
+
+    .field input.error,
+    .field select.error {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 4px rgba(220,38,38,.08);
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .field-hint {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: 5px;
+    }
+
+    /* ── ERROR MSG ── */
+    .msg-box {
+      display: none;
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+    .msg-box.error   { background: var(--warn-bg); color: var(--danger); border: 1.5px solid #FCA5A5; }
+    .msg-box.success { background: #F0FDF4; color: #15803D; border: 1.5px solid #86EFAC; }
+    .msg-box.show    { display: block; }
+
+    /* ── PASSWORD STRENGTH ── */
+    .pw-strength-bar {
+      height: 5px;
+      border-radius: 3px;
+      background: var(--divider);
+      margin-top: 7px;
+      overflow: hidden;
+    }
+    .pw-strength-fill {
+      height: 100%;
+      border-radius: 3px;
+      width: 0%;
+      transition: width .3s, background .3s;
+    }
+    .pw-strength-label {
+      font-size: .76rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ── SUBMIT BTN ── */
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent) 0%, #1D4ED8 100%);
+      color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 5px 18px rgba(37,99,235,.35);
+      transition: opacity .18s, transform .15s;
+      letter-spacing: .02em;
+    }
+    .btn-submit:hover   { opacity: .9; transform: translateY(-2px); }
+    .btn-submit:active  { opacity: 1; transform: translateY(0); }
+    .btn-submit:disabled{ opacity: .6; cursor: not-allowed; transform: none; }
+
+    /* ── ADMIN LINK ── */
+    .admin-link-wrap {
+      border-top: 1.5px solid var(--divider);
+      padding: 20px 40px;
+      text-align: center;
+    }
+    .admin-link-wrap p { font-size: .85rem; color: var(--muted); margin-bottom: 10px; }
+
+    .btn-admin {
+      font-family: 'Sarabun', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      padding: 10px 28px;
+      border: 1.5px solid #7C3AED;
+      border-radius: 20px;
+      background: #fff;
+      color: #7C3AED;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-admin:hover { background: #7C3AED; color: #fff; }
+
+    /* ── ADMIN OVERLAY ── */
+    #adminOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,27,45,.6);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #adminOverlay.open { display: flex; }
+
+    .admin-modal {
+      background: var(--card);
+      border-radius: 22px;
+      padding: 36px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    }
+    .admin-modal h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #7C3AED;
+      margin-bottom: 22px;
+    }
+    .admin-modal .btn-close {
+      float: right;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--muted);
+      cursor: pointer;
+      margin-top: -4px;
+    }
+
+    /* ── SPINNER ── */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .form-body       { padding: 28px 24px 32px; }
+      .admin-link-wrap { padding: 16px 24px; }
+      .hero            { padding: 28px 24px 22px; }
+      .hero h1         { font-size: 1.2rem; }
+      .field-row       { grid-template-columns: 1fr; gap: 0; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header class="hero">
-    <img src="logo.png" class="school-logo">
-    <h1>🏆 ระบบโหวตนักเรียนดีเป็นศรีบางสะพาน.</h1>
+
+<div class="card">
+
+  <!-- HERO -->
+  <div class="hero">
+    <img src="logo.png" alt="ตราโรงเรียนบางสะพานวิทยา" class="logo"/>
+    <h1>ระบบโหวตนักเรียนดีเป็น<br>ศรีบางสะพาน</h1>
     <p>Outstanding Student Voting System</p>
+    <span class="hero-year">ประจำปีการศึกษา 2569</span>
+  </div>
 
-    <div class="hero-badge">
-        ประจำปีการศึกษา 2569
-    </div>
-</header>
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" id="tabRegister" onclick="switchTab('register')">📝 ลงทะเบียน</button>
+    <button class="tab-btn"        id="tabLogin"    onclick="switchTab('login')">🔑 เข้าสู่ระบบ</button>
+  </div>
 
-        <!-- หน้า Login นักเรียน (เป็นหน้าแรก) -->
-        <div id="studentLoginPage" class="section">
-            <div class="login-form-container">
-                <h2>🔐 เข้าสู่ระบบนักเรียน</h2>
-<p>กรุณาลงทะเบียนหรือเข้าสู่ระบบเพื่อใช้สิทธิ์โหวต</p>
-                <div class="login-form">
-                    <h3>เลือกประเภท</h3>
-                    <div class="login-tabs">
-                        <button class="tab-btn active" onclick="switchStudentTab('register')">ลงทะเบียน</button>
-                        <button class="tab-btn" onclick="switchStudentTab('login')">เข้าสู่ระบบ</button>
-                    </div>
+  <div class="form-body">
 
-                    <!-- ฟอร์มลงทะเบียน -->
-                    <div id="registerForm" class="tab-content active">
-                        <h4>ลงทะเบียนเป็นสมาชิก</h4>
-                        <input type="text" id="regStudentID" placeholder="เลขประจำตัวนักเรียน" required>
-                        <input type="text" id="regName" placeholder="ชื่อ-นามสกุล" required>
-                        <select id="regGrade" required>
-                            <option value="">เลือกชั้น</option>
-                            <option value="1">ม.1</option>
-                            <option value="2">ม.2</option>
-                            <option value="3">ม.3</option>
-                            <option value="4">ม.4</option>
-                            <option value="5">ม.5</option>
-                            <option value="6">ม.6</option>
-                        </select>
-                        <select id="regClassroom" required>
-                            <option value="">เลือกห้อง</option>
-                        </select>
-                        <input type="password" id="regPassword" placeholder="รหัสผ่าน" required>
-                        <input type="password" id="regPasswordConfirm" placeholder="ยืนยันรหัสผ่าน" required>
-                        <button class="btn-primary" onclick="registerStudent()">ลงทะเบียน</button>
-                    </div>
+    <!-- ══ REGISTER FORM ══ -->
+    <div class="form-section active" id="sectionRegister">
+      <div class="form-title">📝 สร้างบัญชีนักเรียน</div>
+      <div class="msg-box" id="regMsg"></div>
 
-                    <!-- ฟอร์มเข���าสู่ระบบ -->
-                    <div id="loginForm" class="tab-content hidden">
-                        <h4>เข้าสู่ระบบ</h4>
-                        <input type="text" id="loginStudentID" placeholder="เลขประจำตัวนักเรียน" required>
-                        <input type="password" id="loginPassword" placeholder="รหัสผ่าน" required>
-                        <button class="btn-primary" onclick="studentLogin()">เข้าสู่ระบบ</button>
-                    </div>
-                </div>
+      <div class="field">
+        <label>เลขประจำตัวนักเรียน <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="regID" maxlength="5" placeholder="ตัวเลข 5 หลัก"
+               oninput="this.value=this.value.replace(/\D/g,'')"/>
+        <div class="field-hint">กรอกเฉพาะตัวเลข 5 หลัก</div>
+      </div>
 
-                <!-- ปุ่ม Admin -->
-                <div style="text-align: center; margin-top: 30px; border-top: 2px solid #ddd; padding-top: 20px;">
-                    <p style="color: #666; margin-bottom: 15px;">สำหรับผู้ดูแลระบบ</p>
-                    <button class="admin-btn" onclick="goToAdminLogin()">👨‍🏫 ผู้ดูแลระบบ</button>
-                </div>
-            </div>
+      <div class="field">
+        <label>ชื่อ-นามสกุล <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="regName" placeholder="เช่น สมชาย ใจดี"/>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>ระดับชั้น <span style="color:var(--danger)">*</span></label>
+          <select id="regGrade" onchange="updateRoomOptions('regRoom', this.value)">
+            <option value="">-- เลือกชั้น --</option>
+            <option value="1">ม.1</option>
+            <option value="2">ม.2</option>
+            <option value="3">ม.3</option>
+            <option value="4">ม.4</option>
+            <option value="5">ม.5</option>
+            <option value="6">ม.6</option>
+          </select>
         </div>
-
-        <!-- หน้า Login Admin -->
-        <div id="adminLoginPage" class="section hidden">
-            <button class="back-btn" onclick="backToStudentLogin()">← กลับ</button>
-            <div class="login-form-container">
-                <h2>เข้าสู่ระบบ - ผู้ดูแลระบบ</h2>
-                <div class="login-form">
-                    <h4>กรุณากรอกรหัสผ่าน</h4>
-                    <input type="password" id="adminPassword" placeholder="รหัสผ่าน Admin" required>
-                    <button class="btn-primary" onclick="adminLogin()">เข้าสู่ระบบ</button>
-                </div>
-            </div>
+        <div class="field">
+          <label>ห้อง <span style="color:var(--danger)">*</span></label>
+          <select id="regRoom" disabled>
+            <option value="">-- เลือกชั้นก่อน --</option>
+          </select>
         </div>
+      </div>
 
-        <!-- หน้าเลือกชั้น (นักเรียน) -->
-        <div id="gradeSelection" class="section hidden">
-            <div class="logout-bar">
-                <span id="currentUserDisplay">ผู้ใช้: -</span>
-                <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
-            </div>
+      <div class="field">
+        <label>รหัสผ่าน <span style="color:var(--danger)">*</span></label>
+        <input type="password" id="regPass" placeholder="อย่างน้อย 6 ตัวอักษร"
+               oninput="checkStrength(this.value)"/>
+        <div class="pw-strength-bar"><div class="pw-strength-fill" id="pwFill"></div></div>
+        <div class="pw-strength-label" id="pwLabel">—</div>
+      </div>
 
-        <!-- หน้าเลือกห้อง -->
-        <div id="classroomSelection" class="section hidden">
-            <button class="back-btn" onclick="backToGrade()">← กลับ</button>
-            <h2>เลือกห้องเรียน (ม.<span id="selectedGradeDisplay"></span>)</h2>
-            <div id="classroomGrid" class="classroom-grid">
-                <!-- ห้องจะสร้างด้วย JavaScript -->
-            </div>
-        </div>
+      <div class="field">
+        <label>ยืนยันรหัสผ่าน <span style="color:var(--danger)">*</span></label>
+        <input type="password" id="regPassConfirm" placeholder="พิมพ์รหัสผ่านอีกครั้ง"/>
+      </div>
 
-        <!-- หน้าโหวต -->
-        <div id="votingPage" class="section hidden">
-            <button class="back-btn" onclick="backToClassroom()">← กลับ</button>
-            <div class="classroom-info">
-                <img id="classroomImage" src="" alt="รูปห้อง" class="classroom-image">
-                <h2>ห้อง <span id="classroomNumberDisplay"></span> ม.<span id="gradeNumberDisplay"></span></h2>
-            </div>
-
-            <!-- หน้าโหวต -->
-            <div id="pollSection" class="hidden">
-                <h3>โปรดเลือกตัวเลือกของคุณ</h3>
-                <div id="pollOptions" class="poll-options">
-                    <!-- ตัวเลือกจะสร้างด้วย JavaScript -->
-                </div>
-                <button class="btn-primary" onclick="submitVote()">ยืนยันการโหวต</button>
-            </div>
-
-            <!-- ข้อความหลังโหวต -->
-            <div id="voteSuccessMessage" class="hidden success-message">
-                <h3>✅ ขอบคุณที่โหวต</h3>
-                <p>การโหวตของคุณถูกบันทึกแล้ว</p>
-                <button class="btn-primary" onclick="reset()">โหวตใหม่</button>
-            </div>
-
-            <!-- ข้อความเมื่อโหวตซ้ำ -->
-            <div id="alreadyVotedMessage" class="hidden error-message">
-                <h3>⚠️ คุณโหวตแล้ว</h3>
-                <p>คุณได้โหวตในการโหวตนี้แล้ว ไม่สามารถโหวตอีกได้</p>
-                <button class="btn-primary" onclick="reset()">กลับหน้าแรก</button>
-            </div>
-
-            <!-- ข้อความยังไม่มีการโหวต -->
-            <div id="noPolsMessage" class="hidden info-message">
-                <h3>ℹ️ ยังไม่มีการโหวต</h3>
-                <p>ยังไม่มีการโหวตในขณะนี้ โปรดกลับมาภายหลัง</p>
-                <button class="btn-primary" onclick="reset()">กลับหน้าแรก</button>
-            </div>
-        </div>
-
-        <!-- หน้าจัดการ (สำหรับครู) -->
-        <div id="adminPage" class="section hidden">
-            <div class="logout-bar">
-                <span style="font-weight: bold; color: #667eea;">👨‍🏫 ผู้ดูแลระบบ</span>
-                <button class="logout-btn" onclick="logout()">ออกจากระบบ</button>
-            </div>
-            <h2>จัดการระบบโหวต</h2>
-
-            <div class="admin-form">
-                <h4>📸 อัพโหลดรูปห้อง</h4>
-                <select id="adminGradeSelect" onchange="updateClassroomSelect()">
-                    <option value="">เลือกชั้น</option>
-                    <option value="1">ม.1</option>
-                    <option value="2">ม.2</option>
-                    <option value="3">ม.3</option>
-                    <option value="4">ม.4</option>
-                    <option value="5">ม.5</option>
-                    <option value="6">ม.6</option>
-                </select>
-                <select id="adminClassroomSelect">
-                    <option value="">เลือกห้อง</option>
-                </select>
-                <input type="file" id="imageUpload" accept="image/*">
-                <button class="btn-primary" onclick="uploadClassroomImage()">อัพโหลดรูป</button>
-            </div>
-
-            <div class="admin-form">
-                <h4>📊 ดูผลการโหวต</h4>
-                <button class="btn-primary" onclick="showResults()">ดูผลลัพธ์</button>
-                <div id="resultsDisplay"></div>
-            </div>
-
-            <div class="admin-form">
-                <h4>👥 ดูรายชื่อนักเรียนที่ลงทะเบียน</h4>
-                <button class="btn-primary" onclick="showStudentList()">ดูรายชื่อ</button>
-                <div id="studentListDisplay"></div>
-            </div>
-        </div>
+      <button class="btn-submit" id="btnRegister" onclick="doRegister()">สร้างบัญชี</button>
     </div>
 
-    <script src="script.js"></script>
+    <!-- ══ LOGIN FORM ══ -->
+    <div class="form-section" id="sectionLogin">
+      <div class="form-title">🔑 เข้าสู่ระบบ</div>
+      <div class="msg-box" id="loginMsg"></div>
+
+      <div class="field">
+        <label>เลขประจำตัวนักเรียน <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="loginID" maxlength="5" placeholder="ตัวเลข 5 หลัก"
+               oninput="this.value=this.value.replace(/\D/g,'')"/>
+      </div>
+
+      <div class="field">
+        <label>รหัสผ่าน <span style="color:var(--danger)">*</span></label>
+        <input type="password" id="loginPass" placeholder="รหัสผ่านของคุณ"
+               onkeydown="if(event.key==='Enter') doLogin()"/>
+      </div>
+
+      <button class="btn-submit" id="btnLogin" onclick="doLogin()">เข้าสู่ระบบ</button>
+
+      <p style="text-align:center; margin-top:18px; font-size:.88rem; color:var(--muted);">
+        ยังไม่มีบัญชี?
+        <a href="#" onclick="switchTab('register'); return false;"
+           style="color:var(--accent); font-weight:700; text-decoration:none;">ลงทะเบียนที่นี่</a>
+      </p>
+    </div>
+
+  </div><!-- /form-body -->
+
+  <!-- ADMIN LINK -->
+  <div class="admin-link-wrap">
+    <p>สำหรับผู้ดูแลระบบเท่านั้น</p>
+    <button class="btn-admin" onclick="openAdminOverlay()">👨‍🏫 เข้าสู่ระบบผู้ดูแล</button>
+  </div>
+
+</div><!-- /card -->
+
+<!-- ADMIN OVERLAY -->
+<div id="adminOverlay">
+  <div class="admin-modal">
+    <button class="btn-close" onclick="closeAdminOverlay()">✕</button>
+    <h3>👨‍🏫 ผู้ดูแลระบบ</h3>
+    <div class="msg-box" id="adminMsg"></div>
+
+    <div class="field">
+      <label>รหัสผ่าน Admin</label>
+      <input type="password" id="adminPass" placeholder="กรอกรหัสผ่าน"
+             onkeydown="if(event.key==='Enter') doAdminLogin()"/>
+    </div>
+    <button class="btn-submit" onclick="doAdminLogin()">เข้าสู่ระบบ</button>
+  </div>
+</div>
+
+<script>
+  const ADMIN_PASSWORD   = 'admin123';
+  const STUDENTS_KEY     = 'reg_students';
+  const CLASSROOMS_COUNT = 13;
+  const GSHEET_CSV_URL   = '';
+
+  function getStudents() {
+    try { return JSON.parse(localStorage.getItem(STUDENTS_KEY)) || {}; }
+    catch { return {}; }
+  }
+  function saveStudents(data) {
+    localStorage.setItem(STUDENTS_KEY, JSON.stringify(data));
+  }
+
+  function hashPw(pw) {
+    let h = 0;
+    for (let i = 0; i < pw.length; i++) h = (Math.imul(31, h) + pw.charCodeAt(i)) | 0;
+    return h.toString(16);
+  }
+
+  function switchTab(tab) {
+    document.getElementById('sectionRegister').classList.toggle('active', tab === 'register');
+    document.getElementById('sectionLogin').classList.toggle('active', tab === 'login');
+    document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+    document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+    clearMsg('regMsg'); clearMsg('loginMsg');
+  }
+
+  function updateRoomOptions(selectId, grade) {
+    const sel = document.getElementById(selectId);
+    sel.innerHTML = '<option value="">-- เลือกห้อง --</option>';
+    if (!grade) { sel.disabled = true; return; }
+    sel.disabled = false;
+    for (let r = 1; r <= CLASSROOMS_COUNT; r++) {
+      const opt = document.createElement('option');
+      opt.value = r;
+      opt.textContent = `ห้อง ${r}`;
+      sel.appendChild(opt);
+    }
+  }
+
+  function checkStrength(pw) {
+    const fill  = document.getElementById('pwFill');
+    const label = document.getElementById('pwLabel');
+    let score = 0;
+    if (pw.length >= 6)  score++;
+    if (pw.length >= 10) score++;
+    if (/[A-Z]/.test(pw) || /[a-z]/.test(pw)) score++;
+    if (/\d/.test(pw)) score++;
+    if (/[^A-Za-z0-9]/.test(pw)) score++;
+    const levels = [
+      { w:'0%',   bg:'transparent', txt:'—' },
+      { w:'25%',  bg:'#EF4444',     txt:'อ่อนมาก' },
+      { w:'50%',  bg:'#F97316',     txt:'พอใช้' },
+      { w:'75%',  bg:'#EAB308',     txt:'ดี' },
+      { w:'100%', bg:'#10B981',     txt:'แข็งแกร่ง' },
+    ];
+    const lv = pw.length === 0 ? 0 : Math.min(score, 4);
+    fill.style.width      = levels[lv].w;
+    fill.style.background = levels[lv].bg;
+    label.textContent     = levels[lv].txt;
+  }
+
+  function showMsg(id, text, type = 'error') {
+    const el = document.getElementById(id);
+    el.textContent = text;
+    el.className = `msg-box ${type} show`;
+  }
+  function clearMsg(id) {
+    const el = document.getElementById(id);
+    el.className = 'msg-box';
+    el.textContent = '';
+  }
+
+  async function verifyIDInSheet(studentID) {
+    if (!GSHEET_CSV_URL) return true;
+    try {
+      const res  = await fetch(GSHEET_CSV_URL);
+      const text = await res.text();
+      const ids  = text.split('\n').map(r => r.split(',')[0].trim());
+      return ids.includes(studentID);
+    } catch { return true; }
+  }
+
+  async function doRegister() {
+    clearMsg('regMsg');
+    const id      = document.getElementById('regID').value.trim();
+    const name    = document.getElementById('regName').value.trim();
+    const grade   = document.getElementById('regGrade').value;
+    const room    = document.getElementById('regRoom').value;
+    const pass    = document.getElementById('regPass').value;
+    const confirm = document.getElementById('regPassConfirm').value;
+
+    if (id.length !== 5)  { showMsg('regMsg','⚠️ เลขประจำตัวต้องมี 5 หลัก'); return; }
+    if (!name)             { showMsg('regMsg','⚠️ กรุณากรอกชื่อ-นามสกุล'); return; }
+    if (!grade)            { showMsg('regMsg','⚠️ กรุณาเลือกระดับชั้น'); return; }
+    if (!room)             { showMsg('regMsg','⚠️ กรุณาเลือกห้อง'); return; }
+    if (pass.length < 6)   { showMsg('regMsg','⚠️ รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร'); return; }
+    if (pass !== confirm)  { showMsg('regMsg','⚠️ รหัสผ่านทั้งสองช่องไม่ตรงกัน'); return; }
+
+    const students = getStudents();
+    if (students[id]) {
+      showMsg('regMsg','❌ เลขประจำตัวนี้ถูกลงทะเบียนแล้ว ไม่สามารถสร้างบัญชีซ้ำได้');
+      return;
+    }
+
+    const btn = document.getElementById('btnRegister');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>กำลังตรวจสอบ...';
+
+    const valid = await verifyIDInSheet(id);
+    btn.disabled = false;
+    btn.innerHTML = 'สร้างบัญชี';
+
+    if (!valid) {
+      showMsg('regMsg','❌ ไม่พบเลขประจำตัวนี้ในระบบโรงเรียน กรุณาตรวจสอบอีกครั้ง');
+      return;
+    }
+
+    students[id] = {
+      studentID: id, name,
+      grade: parseInt(grade), room: parseInt(room),
+      password: hashPw(pass),
+      registeredAt: new Date().toISOString()
+    };
+    saveStudents(students);
+    showMsg('regMsg', `✅ ลงทะเบียนสำเร็จ! ยินดีต้อนรับ "${name}" — กรุณาเข้าสู่ระบบ`, 'success');
+
+    ['regID','regName','regPass','regPassConfirm'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('regGrade').value = '';
+    document.getElementById('regRoom').innerHTML = '<option value="">-- เลือกชั้นก่อน --</option>';
+    document.getElementById('regRoom').disabled = true;
+    checkStrength('');
+    setTimeout(() => switchTab('login'), 1800);
+  }
+
+  function doLogin() {
+    clearMsg('loginMsg');
+    const id   = document.getElementById('loginID').value.trim();
+    const pass = document.getElementById('loginPass').value;
+
+    if (id.length !== 5) { showMsg('loginMsg','⚠️ เลขประจำตัวต้องมี 5 หลัก'); return; }
+    if (!pass)           { showMsg('loginMsg','⚠️ กรุณากรอกรหัสผ่าน'); return; }
+
+    const students = getStudents();
+    const student  = students[id];
+
+    if (!student) {
+      showMsg('loginMsg','❌ ไม่พบเลขประจำตัวนี้ในระบบ กรุณาลงทะเบียนก่อน');
+      return;
+    }
+    if (student.password !== hashPw(pass)) {
+      showMsg('loginMsg','❌ รหัสผ่านไม่ถูกต้อง');
+      return;
+    }
+
+    sessionStorage.setItem('currentUser', JSON.stringify({
+      studentID: student.studentID, name: student.name,
+      grade: student.grade, room: student.room, isAdmin: false
+    }));
+
+    showMsg('loginMsg', `✅ เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับ "${student.name}"`, 'success');
+    const btn = document.getElementById('btnLogin');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>กำลังเข้าสู่ระบบ...';
+    setTimeout(() => { window.location.href = 'vote.html'; }, 1200);
+  }
+
+  function openAdminOverlay() {
+    document.getElementById('adminOverlay').classList.add('open');
+    document.getElementById('adminPass').value = '';
+    clearMsg('adminMsg');
+    setTimeout(() => document.getElementById('adminPass').focus(), 100);
+  }
+  function closeAdminOverlay() {
+    document.getElementById('adminOverlay').classList.remove('open');
+  }
+  function doAdminLogin() {
+    const pass = document.getElementById('adminPass').value;
+    if (!pass) { showMsg('adminMsg','⚠️ กรุณากรอกรหัสผ่าน'); return; }
+    if (hashPw(pass) !== hashPw(ADMIN_PASSWORD)) {
+      showMsg('adminMsg','❌ รหัสผ่านไม่ถูกต้อง');
+      return;
+    }
+    sessionStorage.setItem('currentUser', JSON.stringify({ isAdmin: true }));
+    showMsg('adminMsg','✅ เข้าสู่ระบบสำเร็จ กำลังเปลี่ยนหน้า...', 'success');
+    setTimeout(() => { window.location.href = 'vote.html'; }, 1000);
+  }
+
+  document.getElementById('adminOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeAdminOverlay();
+  });
+
+  (function() {
+    const u = sessionStorage.getItem('currentUser');
+    if (u) { try { if (JSON.parse(u)) window.location.href = 'vote.html'; } catch {} }
+  })();
+</script>
 </body>
 </html>
