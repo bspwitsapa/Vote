@@ -21,7 +21,6 @@
       --purple:       #7C3AED;
       --purple-dark:  #5B21B6;
       --danger:       #DC2626;
-      --gold:         #F59E0B;
     }
 
     html { scroll-behavior: smooth; }
@@ -61,249 +60,257 @@
       z-index: 98;
     }
 
-    .user-info { font-size: .82rem; color: var(--muted); font-weight: 600; }
-    .user-info span { color: var(--blue); font-weight: 700; }
+    .user-info {
+      font-size: .82rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .user-info span {
+      color: var(--blue);
+      font-weight: 700;
+    }
 
-    .bar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .bar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
+    /* admin badge */
     .admin-badge {
-      font-size: .72rem; font-weight: 700;
-      padding: 4px 12px; border-radius: 20px;
-      background: #EDE9FE; color: var(--purple); border: 1.5px solid #C4B5FD;
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: #EDE9FE;
+      color: var(--purple);
+      border: 1.5px solid #C4B5FD;
     }
 
+    /* toggle admin panel btn */
     #adminToggleBtn {
-      font-family: 'Sarabun', sans-serif; font-size: .78rem; font-weight: 700;
-      padding: 6px 16px; border-radius: 20px;
-      border: 1.5px solid var(--purple); background: #fff; color: var(--purple);
-      cursor: pointer; transition: all .2s;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1.5px solid var(--purple);
+      background: #fff;
+      color: var(--purple);
+      cursor: pointer;
+      transition: all .2s;
     }
-    #adminToggleBtn:hover, #adminToggleBtn.active { background: var(--purple); color: #fff; }
+    #adminToggleBtn:hover,
+    #adminToggleBtn.active {
+      background: var(--purple);
+      color: #fff;
+    }
 
-    /* ── ปุ่มดูผลโหวต ── */
-    #resultToggleBtn {
-      font-family: 'Sarabun', sans-serif; font-size: .78rem; font-weight: 700;
-      padding: 6px 16px; border-radius: 20px;
-      border: 1.5px solid var(--gold); background: #fff; color: #92400E;
-      cursor: pointer; transition: all .2s;
-    }
-    #resultToggleBtn:hover, #resultToggleBtn.active {
-      background: var(--gold); color: #fff; border-color: var(--gold);
-    }
-
+    /* logout btn */
     .btn-logout {
-      font-family: 'Sarabun', sans-serif; font-size: .78rem; font-weight: 700;
-      padding: 6px 14px; border-radius: 20px;
-      border: 1.5px solid #FCA5A5; background: #fff; color: var(--danger);
-      cursor: pointer; transition: all .2s;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid #FCA5A5;
+      background: #fff;
+      color: var(--danger);
+      cursor: pointer;
+      transition: all .2s;
     }
     .btn-logout:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
 
     /* ── ADMIN PANEL ── */
     #adminPanel {
-      display: none; background: #F5F3FF;
-      border-bottom: 2px solid #DDD6FE; padding: 20px 24px;
+      display: none;
+      background: #F5F3FF;
+      border-bottom: 2px solid #DDD6FE;
+      padding: 20px 24px;
     }
     #adminPanel.open { display: block; }
-    #adminPanel h3 { font-size: 1rem; font-weight: 800; color: var(--purple); margin-bottom: 16px; }
+
+    #adminPanel h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--purple);
+      margin-bottom: 16px;
+    }
 
     .admin-form-grid {
-      display: grid; grid-template-columns: auto 1fr 1fr 1fr auto;
-      gap: 10px; align-items: end;
+      display: grid;
+      grid-template-columns: auto 1fr 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
     }
 
     .form-group { display: flex; flex-direction: column; gap: 5px; }
     .form-group label { font-size: .73rem; font-weight: 700; color: var(--blue); }
 
-    .form-group input, .form-group select {
-      font-family: 'Sarabun', sans-serif; font-size: .82rem;
-      padding: 8px 12px; border: 1.5px solid var(--divider);
-      border-radius: 8px; background: #fff; color: var(--text);
-      outline: none; transition: border-color .2s;
+    .form-group input,
+    .form-group select {
+      font-family: 'Sarabun', sans-serif;
+      font-size: .82rem;
+      padding: 8px 12px;
+      border: 1.5px solid var(--divider);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
     }
-    .form-group input:focus, .form-group select:focus { border-color: var(--purple); }
+    .form-group input:focus,
+    .form-group select:focus { border-color: var(--purple); }
 
     .avatar-upload-wrap {
-      width: 68px; height: 68px; border-radius: 50%;
-      border: 2px dashed #A78BFA; background: #EDE9FE;
+      width: 68px; height: 68px;
+      border-radius: 50%;
+      border: 2px dashed #A78BFA;
+      background: #EDE9FE;
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; overflow: hidden; flex-shrink: 0; transition: border-color .2s;
+      cursor: pointer;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: border-color .2s;
     }
     .avatar-upload-wrap:hover { border-color: var(--purple); }
-    .avatar-upload-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-upload-wrap img  { width: 100%; height: 100%; object-fit: cover; }
     .avatar-upload-wrap span { font-size: .68rem; color: #A78BFA; text-align: center; line-height: 1.3; padding: 4px; }
     #avatarFileInput { display: none; }
 
     .btn-add {
-      font-family: 'Sarabun', sans-serif; font-size: .84rem; font-weight: 700;
-      padding: 9px 20px; border: none; border-radius: 10px;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .84rem;
+      font-weight: 700;
+      padding: 9px 20px;
+      border: none;
+      border-radius: 10px;
       background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%);
-      color: #fff; cursor: pointer;
+      color: #fff;
+      cursor: pointer;
       box-shadow: 0 3px 10px rgba(124,58,237,.3);
-      transition: opacity .18s, transform .15s; white-space: nowrap;
+      transition: opacity .18s, transform .15s;
+      white-space: nowrap;
     }
     .btn-add:hover { opacity: .88; transform: scale(1.03); }
 
-    /* ── RESULT PANEL ── */
-    #resultPanel {
-      display: none; background: #FFFBEB;
-      border-bottom: 2px solid #FDE68A; padding: 28px 28px 32px;
-    }
-    #resultPanel.open { display: block; }
-
-    .result-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 22px; flex-wrap: wrap; gap: 12px;
-    }
-    .result-header h3 {
-      font-size: 1.1rem; font-weight: 800; color: #92400E;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .result-meta {
-      font-size: .78rem; color: #B45309; background: #FEF3C7;
-      padding: 5px 14px; border-radius: 20px; font-weight: 600;
-    }
-
-    .result-grade-tabs {
-      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
-    }
-    .result-tab {
-      font-family: 'Sarabun', sans-serif; font-size: .78rem; font-weight: 700;
-      padding: 6px 16px; border-radius: 20px;
-      border: 1.5px solid #FDE68A; background: #fff; color: #92400E;
-      cursor: pointer; transition: all .2s;
-    }
-    .result-tab.active, .result-tab:hover {
-      background: var(--gold); color: #fff; border-color: var(--gold);
-    }
-
-    .result-content { display: none; }
-    .result-content.active { display: block; }
-
-    .result-list { display: flex; flex-direction: column; gap: 10px; }
-
-    .result-row {
-      display: flex; align-items: center; gap: 14px;
-      background: #fff; border-radius: 12px; padding: 12px 16px;
-      border: 1.5px solid #FDE68A;
-      box-shadow: 0 2px 6px rgba(0,0,0,.04);
-    }
-    .result-row.rank-1 { border-color: #F59E0B; background: #FFFBEB; box-shadow: 0 4px 14px rgba(245,158,11,.15); }
-    .result-row.rank-2 { border-color: #94A3B8; }
-    .result-row.rank-3 { border-color: #CD7F32; }
-
-    .result-rank {
-      width: 32px; height: 32px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: .82rem; flex-shrink: 0;
-      background: #F1F5F9; color: var(--muted);
-    }
-    .result-row.rank-1 .result-rank { background: linear-gradient(135deg,#F59E0B,#D97706); color:#fff; font-size:1rem; }
-    .result-row.rank-2 .result-rank { background: linear-gradient(135deg,#94A3B8,#64748B); color:#fff; }
-    .result-row.rank-3 .result-rank { background: linear-gradient(135deg,#CD7F32,#A0522D); color:#fff; }
-
-    .result-avatar {
-      width: 44px; height: 44px; border-radius: 50%;
-      overflow: hidden; flex-shrink: 0; border: 2px solid #E2EAF4;
-      background: #E8F0FE; display: flex; align-items: center; justify-content: center;
-    }
-    .result-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .result-avatar svg { width: 26px; height: 26px; opacity: .5; }
-
-    .result-info { flex: 1; min-width: 0; }
-    .result-name { font-size: .9rem; font-weight: 700; color: var(--text); }
-    .result-class { font-size: .75rem; color: var(--muted); margin-top: 2px; }
-
-    .result-bar-wrap {
-      flex: 1; min-width: 80px; max-width: 220px;
-    }
-    .result-bar-track {
-      height: 8px; background: #F1F5F9; border-radius: 8px; overflow: hidden;
-    }
-    .result-bar-fill {
-      height: 100%; border-radius: 8px;
-      background: linear-gradient(90deg, var(--emerald), #34D399);
-      transition: width .6s cubic-bezier(.4,0,.2,1);
-    }
-    .result-row.rank-1 .result-bar-fill { background: linear-gradient(90deg,#F59E0B,#FCD34D); }
-
-    .result-votes {
-      font-size: .95rem; font-weight: 800;
-      color: var(--blue); min-width: 52px; text-align: right;
-    }
-    .result-votes span { font-size: .72rem; color: var(--muted); font-weight: 600; }
-
-    .result-empty {
-      text-align: center; color: var(--muted); font-size: .85rem;
-      padding: 32px 0; font-style: italic;
-    }
-
-    .result-summary-bar {
-      display: flex; gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
-    }
-    .summary-chip {
-      background: #fff; border: 1.5px solid #FDE68A; border-radius: 10px;
-      padding: 8px 16px; font-size: .8rem; font-weight: 600; color: #92400E;
-    }
-    .summary-chip strong { font-size: 1.1rem; color: var(--blue); margin-right: 4px; }
-
     /* ── GRADE NAV ── */
     .grade-nav {
-      display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;
-      padding: 12px 16px; background: var(--card); border-bottom: 1px solid var(--divider);
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      background: var(--card);
+      border-bottom: 1px solid var(--divider);
     }
+
     .grade-nav a {
-      text-decoration: none; font-size: .78rem; font-weight: 700;
-      color: var(--blue); background: var(--bg);
-      border: 1.5px solid var(--divider); border-radius: 20px; padding: 5px 14px; transition: all .2s;
+      text-decoration: none;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--blue);
+      background: var(--bg);
+      border: 1.5px solid var(--divider);
+      border-radius: 20px;
+      padding: 5px 14px;
+      transition: all .2s;
     }
     .grade-nav a:hover { background: var(--emerald); color: #fff; border-color: var(--emerald); }
 
     /* ── MAIN ── */
-    main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
-
-    .grade-section { margin-bottom: 52px; }
-    .section-header { margin-bottom: 6px; }
-    .section-header h2 {
-      font-size: 1.2rem; font-weight: 800; color: var(--blue);
-      display: flex; align-items: center; gap: 10px;
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
     }
+
+    /* ── SECTION ── */
+    .grade-section { margin-bottom: 52px; }
+
+    .section-header { margin-bottom: 6px; }
+
+    .section-header h2 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .section-header h2 .badge {
       background: linear-gradient(135deg, var(--emerald) 0%, #059669 100%);
-      color: #fff; font-size: .65rem; font-weight: 700; border-radius: 20px; padding: 3px 10px;
+      color: #fff;
+      font-size: .65rem;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 3px 10px;
     }
+
     .section-divider {
-      height: 3px; border-radius: 2px;
+      height: 3px;
+      border-radius: 2px;
       background: linear-gradient(90deg, var(--emerald) 0%, #93C5FD 60%, transparent 100%);
-      margin-top: 8px; margin-bottom: 22px;
+      margin-top: 8px;
+      margin-bottom: 22px;
     }
-    .empty-state { color: var(--muted); font-size: .82rem; padding: 18px 0 4px; font-style: italic; }
+
+    .empty-state {
+      color: var(--muted);
+      font-size: .82rem;
+      padding: 18px 0 4px;
+      font-style: italic;
+    }
 
     /* ── CARD GRID ── */
-    .card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
 
     /* ── STUDENT CARD ── */
     .student-card {
-      background: var(--card); border-radius: 16px; padding: 24px 14px 18px;
-      text-align: center; box-shadow: 0 2px 10px rgba(15,27,45,.07);
-      border: 1.5px solid #E2EAF4; transition: transform .22s, box-shadow .22s; position: relative;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px 14px 18px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(15,27,45,.07);
+      border: 1.5px solid #E2EAF4;
+      transition: transform .22s, box-shadow .22s;
+      position: relative;
     }
     .student-card:hover { transform: translateY(-5px); box-shadow: 0 10px 28px rgba(15,27,45,.13); }
 
+    /* delete button — แสดงเฉพาะเมื่อ admin panel เปิด */
     .btn-delete {
-      position: absolute; top: 8px; right: 8px;
-      width: 24px; height: 24px; border-radius: 50%;
-      border: none; background: #FEE2E2; color: var(--danger);
-      font-size: .78rem; cursor: pointer; display: none;
-      align-items: center; justify-content: center; transition: background .2s;
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: none;
+      background: #FEE2E2;
+      color: var(--danger);
+      font-size: .78rem;
+      cursor: pointer;
+      display: none;            /* ซ่อนอยู่เสมอ */
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
     }
     .btn-delete:hover { background: #FCA5A5; }
+
+    /* เปิดเมื่อ body มี class admin-open (admin เปิด panel เท่านั้น) */
     body.admin-open .btn-delete { display: flex; }
 
     .avatar-wrap {
-      width: 120px; height: 120px; border-radius: 50%;
-      margin: 0 auto 14px; overflow: hidden;
-      border: 4px solid #E2EAF4; background: #E8F0FE;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      overflow: hidden;
+      border: 4px solid #E2EAF4;
+      background: #E8F0FE;
       display: flex; align-items: center; justify-content: center;
     }
     .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -313,14 +320,23 @@
     .student-class { font-size: .75rem; color: var(--muted); margin-bottom: 14px; }
 
     .btn-vote {
-      display: inline-block; width: 100%; padding: 9px 0; border: none; border-radius: 10px;
+      display: inline-block;
+      width: 100%;
+      padding: 9px 0;
+      border: none;
+      border-radius: 10px;
       background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%);
-      color: #fff; font-family: 'Sarabun', sans-serif; font-size: .84rem; font-weight: 700;
-      cursor: pointer; letter-spacing: .03em;
-      transition: opacity .18s, transform .15s; box-shadow: 0 3px 10px rgba(16,185,129,.3);
+      color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .84rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .03em;
+      transition: opacity .18s, transform .15s;
+      box-shadow: 0 3px 10px rgba(16,185,129,.3);
     }
     .btn-vote:hover  { opacity: .88; transform: scale(1.03); }
-    .btn-vote:active { opacity: 1; transform: scale(.97); }
+    .btn-vote:active { opacity: 1;   transform: scale(.97); }
     .btn-vote.voted  {
       background: linear-gradient(135deg, #6B7E96 0%, #4A5568 100%);
       box-shadow: none; cursor: default;
@@ -328,63 +344,126 @@
 
     /* ── CONFIRM MODAL ── */
     #confirmOverlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(15,27,45,.65); backdrop-filter: blur(5px);
-      z-index: 600; align-items: center; justify-content: center; padding: 20px;
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,27,45,.65);
+      backdrop-filter: blur(5px);
+      z-index: 600;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
     #confirmOverlay.show { display: flex; }
 
     .confirm-box {
-      background: #fff; border-radius: 22px; padding: 36px 32px 28px;
-      text-align: center; max-width: 380px; width: 100%;
+      background: #fff;
+      border-radius: 22px;
+      padding: 36px 32px 28px;
+      text-align: center;
+      max-width: 380px;
+      width: 100%;
       box-shadow: 0 20px 60px rgba(0,0,0,.35);
       animation: popIn .25s cubic-bezier(.34,1.56,.64,1);
     }
-    @keyframes popIn { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes popIn {
+      from { transform: scale(.85); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
 
     .confirm-avatar {
-      width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 14px;
-      overflow: hidden; border: 4px solid #E2EAF4; background: #E8F0FE;
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      overflow: hidden;
+      border: 4px solid #E2EAF4;
+      background: #E8F0FE;
       display: flex; align-items: center; justify-content: center;
     }
     .confirm-avatar img { width: 100%; height: 100%; object-fit: cover; }
     .confirm-avatar svg { width: 54px; height: 54px; opacity: .5; }
 
-    .confirm-box h3 { font-size: 1.05rem; font-weight: 800; color: var(--blue); margin-bottom: 6px; }
-    .confirm-box .confirm-name { font-size: 1.15rem; font-weight: 800; color: var(--emerald); margin-bottom: 4px; }
-    .confirm-box .confirm-class { font-size: .8rem; color: var(--muted); margin-bottom: 6px; }
-    .confirm-warn {
-      font-size: .8rem; color: #B45309; background: #FEF3C7;
-      border-radius: 8px; padding: 8px 12px; margin: 14px 0 20px; line-height: 1.5;
+    .confirm-box h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 6px;
     }
-    .confirm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
+    .confirm-box .confirm-name {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--emerald);
+      margin-bottom: 4px;
+    }
+    .confirm-box .confirm-class {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .confirm-warn {
+      font-size: .8rem;
+      color: #B45309;
+      background: #FEF3C7;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin: 14px 0 20px;
+      line-height: 1.5;
+    }
+    .confirm-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
     .btn-confirm-yes {
-      padding: 12px; border: none; border-radius: 12px;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
       background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-dark) 100%);
-      color: #fff; font-family: 'Sarabun', sans-serif; font-size: .95rem; font-weight: 700;
-      cursor: pointer; box-shadow: 0 3px 10px rgba(16,185,129,.3); transition: opacity .18s, transform .15s;
+      color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(16,185,129,.3);
+      transition: opacity .18s, transform .15s;
     }
     .btn-confirm-yes:hover { opacity: .88; transform: scale(1.03); }
 
     .btn-confirm-no {
-      padding: 12px; border: 1.5px solid var(--divider); border-radius: 12px;
-      background: #fff; color: var(--muted); font-family: 'Sarabun', sans-serif;
-      font-size: .95rem; font-weight: 700; cursor: pointer; transition: all .18s;
+      padding: 12px;
+      border: 1.5px solid var(--divider);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--muted);
+      font-family: 'Sarabun', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .18s;
     }
     .btn-confirm-no:hover { background: #F1F5F9; color: var(--text); }
 
     /* ── NOT-LOGGED-IN OVERLAY ── */
     #gateOverlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(15,27,45,.7); backdrop-filter: blur(6px);
-      z-index: 500; align-items: center; justify-content: center; padding: 20px;
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,27,45,.7);
+      backdrop-filter: blur(6px);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
     #gateOverlay.show { display: flex; }
 
     .gate-box {
-      background: #fff; border-radius: 22px; padding: 40px 36px;
-      text-align: center; max-width: 360px; width: 100%;
+      background: #fff;
+      border-radius: 22px;
+      padding: 40px 36px;
+      text-align: center;
+      max-width: 360px;
+      width: 100%;
       box-shadow: 0 20px 60px rgba(0,0,0,.35);
     }
     .gate-box .gate-icon { font-size: 2.4rem; margin-bottom: 14px; }
@@ -392,37 +471,48 @@
     .gate-box p  { font-size: .88rem; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
 
     .btn-go-login {
-      display: inline-block; padding: 13px 32px; border: none; border-radius: 12px;
+      display: inline-block;
+      padding: 13px 32px;
+      border: none;
+      border-radius: 12px;
       background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
-      color: #fff; font-family: 'Sarabun', sans-serif; font-size: 1rem; font-weight: 700;
-      cursor: pointer; text-decoration: none; box-shadow: 0 4px 14px rgba(37,99,235,.35);
+      color: #fff;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(37,99,235,.35);
       transition: opacity .18s, transform .15s;
     }
     .btn-go-login:hover { opacity: .9; transform: translateY(-2px); }
 
     /* ── TOAST ── */
     #toast {
-      position: fixed; bottom: 28px; left: 50%;
+      position: fixed;
+      bottom: 28px; left: 50%;
       transform: translateX(-50%) translateY(80px);
-      background: var(--navy); color: #fff;
-      padding: 12px 26px; border-radius: 30px;
+      background: var(--navy);
+      color: #fff;
+      padding: 12px 26px;
+      border-radius: 30px;
       font-size: .85rem; font-weight: 600;
       box-shadow: 0 8px 24px rgba(0,0,0,.25);
       transition: transform .35s cubic-bezier(.34,1.56,.64,1);
-      white-space: nowrap; z-index: 9999;
+      white-space: nowrap;
+      z-index: 9999;
     }
     #toast.show { transform: translateX(-50%) translateY(0); }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .admin-form-grid { grid-template-columns: auto 1fr 1fr; }
-      .btn-add { grid-column: span 2; }
+      .btn-add         { grid-column: span 2; }
     }
     @media (max-width: 768px) {
       .card-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; }
       .avatar-wrap { width: 100px; height: 100px; }
       .avatar-wrap svg { width: 60px; height: 60px; }
-      .result-bar-wrap { display: none; }
     }
     @media (max-width: 600px) {
       .admin-form-grid { grid-template-columns: 1fr; }
@@ -432,7 +522,6 @@
       .avatar-wrap svg { width: 54px; height: 54px; }
       header h1 { font-size: 1.2rem; }
       .user-bar { flex-wrap: wrap; }
-      #resultPanel { padding: 20px 16px 24px; }
     }
   </style>
 </head>
@@ -447,16 +536,16 @@
 <div class="user-bar" id="userBar">
   <div class="user-info" id="userInfoText">กำลังโหลด...</div>
   <div class="bar-right">
+    <!-- แสดง badge + ปุ่ม panel เฉพาะ admin (JS inject) -->
     <div id="adminControls" style="display:none; align-items:center; gap:10px;">
       <span class="admin-badge">👨‍🏫 ผู้ดูแลระบบ</span>
-      <button id="resultToggleBtn" onclick="toggleResultPanel()">📊 ดูผลการโหวต</button>
       <button id="adminToggleBtn" onclick="toggleAdminPanel()">⚙️ จัดการนักเรียน</button>
     </div>
     <button class="btn-logout" onclick="doLogout()">ออกจากระบบ</button>
   </div>
 </div>
 
-<!-- Admin panel -->
+<!-- Admin panel — เฉพาะ admin เท่านั้นที่จะเห็น (JS toggle) -->
 <div id="adminPanel">
   <h3>➕ เพิ่มนักเรียน</h3>
   <div class="admin-form-grid">
@@ -495,20 +584,6 @@
   </div>
 </div>
 
-<!-- ── RESULT PANEL (admin only) ── -->
-<div id="resultPanel">
-  <div class="result-header">
-    <h3>📊 ผลการโหวต — นักเรียนดีเป็นศรีบางสะพาน</h3>
-    <div class="result-meta" id="resultMeta">รวม 0 โหวต</div>
-  </div>
-
-  <div class="result-summary-bar" id="resultSummaryBar"></div>
-
-  <div class="result-grade-tabs" id="resultTabs"></div>
-
-  <div id="resultContents"></div>
-</div>
-
 <!-- Grade nav -->
 <nav class="grade-nav" id="gradeNav"></nav>
 
@@ -529,7 +604,7 @@
   </div>
 </div>
 
-<!-- Gate overlay -->
+<!-- Gate overlay (ถ้าไม่ได้ login) -->
 <div id="gateOverlay">
   <div class="gate-box">
     <div class="gate-icon">🔒</div>
@@ -541,81 +616,12 @@
 
 <div id="toast"></div>
 
-<!-- ── db.js inline (IndexedDB helpers) ── -->
-<script>
-// ======================================================
-// db.js — IndexedDB helpers (inline)
-// ======================================================
-const DB_NAME    = 'voteAppDB';
-const DB_VERSION = 1;
-const STORE_NAME = 'images';
-let _db = null;
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    if (_db) { resolve(_db); return; }
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = e => e.target.result.createObjectStore(STORE_NAME);
-    req.onsuccess = e => { _db = e.target.result; resolve(_db); };
-    req.onerror   = e => reject(e.target.error);
-  });
-}
-
-async function dbGetImage(key) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx  = db.transaction(STORE_NAME, 'readonly');
-    const req = tx.objectStore(STORE_NAME).get(key);
-    req.onsuccess = e => e.target.result ? resolve(e.target.result) : reject(new Error('not found'));
-    req.onerror   = e => reject(e.target.error);
-  });
-}
-
-async function dbSetImage(key, dataUrl) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx  = db.transaction(STORE_NAME, 'readwrite');
-    const req = tx.objectStore(STORE_NAME).put(dataUrl, key);
-    req.onsuccess = () => resolve();
-    req.onerror   = e => reject(e.target.error);
-  });
-}
-
-async function dbDeleteImage(key) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx  = db.transaction(STORE_NAME, 'readwrite');
-    const req = tx.objectStore(STORE_NAME).delete(key);
-    req.onsuccess = () => resolve();
-    req.onerror   = e => reject(e.target.error);
-  });
-}
-
-// Image compression helper
-function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => {
-      let w = img.width, h = img.height;
-      if (w > maxDim || h > maxDim) {
-        if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
-        else        { w = Math.round(w * maxDim / h); h = maxDim; }
-      }
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      resolve(canvas.toDataURL('image/jpeg', quality));
-    };
-    img.src = dataUrl;
-  });
-}
-</script>
-
+<script src="db.js"></script>
 <script>
   // ── CONSTANTS ──────────────────────────────────────────────────────────────
   const GRADES      = [1,2,3,4,5,6];
-  const STORAGE_KEY = 'voteStudents';
-  const VOTE_COUNT_KEY = 'voteCountsV2';   // { "grade_idx": count }
+  const STORAGE_KEY = 'voteStudents';   // ข้อมูลการ์ดนักเรียน (metadata ไม่มีรูป)
+  const VOTED_KEY   = 'votedNames';     // บันทึกว่า user นี้โหวตใครแล้ว
 
   const avatarColors = [
     ['#DBEAFE','#3B82F6'], ['#FCE7F3','#EC4899'],
@@ -630,18 +636,23 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
   (function checkSession() {
     const raw = sessionStorage.getItem('currentUser');
     if (!raw) {
+      // ไม่มี session → แสดง overlay บังคับ login
       document.getElementById('gateOverlay').classList.add('show');
       document.getElementById('userInfoText').textContent = 'ยังไม่ได้เข้าสู่ระบบ';
       return;
     }
-    try { currentUser = JSON.parse(raw); }
-    catch {
+
+    try {
+      currentUser = JSON.parse(raw);
+    } catch {
       sessionStorage.removeItem('currentUser');
       document.getElementById('gateOverlay').classList.add('show');
       return;
     }
+
     isAdmin = currentUser.isAdmin === true;
 
+    // แสดงชื่อผู้ใช้
     const infoEl = document.getElementById('userInfoText');
     if (isAdmin) {
       infoEl.innerHTML = 'เข้าสู่ระบบในฐานะ <span>ผู้ดูแลระบบ</span>';
@@ -649,32 +660,13 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
       infoEl.innerHTML = `เข้าสู่ระบบ: <span>${currentUser.name || currentUser.studentID}</span>
                           &nbsp;|&nbsp; ม.${currentUser.grade}/${currentUser.room}`;
     }
+
+    // แสดงปุ่มจัดการเฉพาะ admin
     if (isAdmin) {
-      document.getElementById('adminControls').style.display = 'flex';
+      const ctrl = document.getElementById('adminControls');
+      ctrl.style.display = 'flex';
     }
   })();
-
-  // ── VOTE COUNT STORAGE ─────────────────────────────────────────────────────
-  function loadVoteCounts() {
-    try { return JSON.parse(localStorage.getItem(VOTE_COUNT_KEY)) || {}; }
-    catch { return {}; }
-  }
-
-  function saveVoteCounts(counts) {
-    localStorage.setItem(VOTE_COUNT_KEY, JSON.stringify(counts));
-  }
-
-  function incrementVote(grade, idx) {
-    const counts = loadVoteCounts();
-    const key = `${grade}_${idx}`;
-    counts[key] = (counts[key] || 0) + 1;
-    saveVoteCounts(counts);
-  }
-
-  function getVoteCount(grade, idx) {
-    const counts = loadVoteCounts();
-    return counts[`${grade}_${idx}`] || 0;
-  }
 
   // ── STORAGE HELPERS ────────────────────────────────────────────────────────
   function loadStudents() {
@@ -682,6 +674,7 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
     catch { return {}; }
   }
 
+  // บันทึก metadata ลง localStorage — ไม่รวม img (รูปอยู่ IndexedDB แยก)
   function saveStudents(data) {
     const stripped = {};
     for (const g in data) {
@@ -690,14 +683,16 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stripped));
   }
 
-  function hasUsedVote() {
+  // voted set เฉพาะ user คนนี้ (เก็บตาม studentID หรือ 'admin')
+  function getVotedSet() {
     const uid = currentUser ? (currentUser.studentID || 'admin') : 'guest';
-    return localStorage.getItem(`VOTED_ONCE_${uid}`) === '1';
+    try { return new Set(JSON.parse(localStorage.getItem(`${VOTED_KEY}_${uid}`)) || []); }
+    catch { return new Set(); }
   }
 
-  function markVoteUsed() {
+  function saveVotedSet(set) {
     const uid = currentUser ? (currentUser.studentID || 'admin') : 'guest';
-    localStorage.setItem(`VOTED_ONCE_${uid}`, '1');
+    localStorage.setItem(`${VOTED_KEY}_${uid}`, JSON.stringify([...set]));
   }
 
   // ── BUILD GRADE SECTIONS ───────────────────────────────────────────────────
@@ -706,11 +701,13 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
 
   GRADES.forEach(g => {
     const a = document.createElement('a');
-    a.href = `#grade-${g}`; a.textContent = `ม.${g}`;
+    a.href = `#grade-${g}`;
+    a.textContent = `ม.${g}`;
     navEl.appendChild(a);
 
     const sec = document.createElement('section');
-    sec.className = 'grade-section'; sec.id = `grade-${g}`;
+    sec.className = 'grade-section';
+    sec.id = `grade-${g}`;
     sec.innerHTML = `
       <div class="section-header">
         <h2>มัธยมศึกษาปีที่ ${g} <span class="badge">ม.${g}</span></h2>
@@ -722,7 +719,7 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
     mainEl.appendChild(sec);
   });
 
-  // ── RENDER ALL ─────────────────────────────────────────────────────────────
+  // ── RENDER ALL (async — โหลดรูปจาก IndexedDB) ────────────────────────────
   async function renderAll() {
     const data         = loadStudents();
     const alreadyVoted = hasUsedVote();
@@ -732,7 +729,9 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
       const grid  = document.getElementById(`grid-${g}`);
       const empty = document.getElementById(`empty-${g}`);
       const list  = data[key] || [];
+
       grid.innerHTML = '';
+
       if (list.length === 0) { empty.style.display = 'block'; continue; }
       empty.style.display = 'none';
 
@@ -743,6 +742,7 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
         const card = document.createElement('div');
         card.className = 'student-card';
 
+        // ดึงรูปจาก IndexedDB ด้วย key "student_<grade>_<idx>"
         const imgKey  = `student_${g}_${idx}`;
         const imgData = await dbGetImage(imgKey).catch(() => null);
 
@@ -774,9 +774,10 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
     }
   }
 
-  // ── ADD STUDENT ────────────────────────────────────────────────────────────
+  // ── ADD STUDENT (admin only) ──────────────────────────────────────────────
   async function addStudent() {
     if (!isAdmin) { showToast('⛔ เฉพาะผู้ดูแลระบบเท่านั้น', true); return; }
+
     const name  = document.getElementById('inputName').value.trim();
     const grade = document.getElementById('inputGrade').value;
     const room  = document.getElementById('inputRoom').value.trim();
@@ -788,30 +789,38 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
     const data = loadStudents();
     const g    = String(parseInt(grade));
     if (!data[g]) data[g] = [];
-    const idx = data[g].length;
+
+    const idx = data[g].length;   // index ของนักเรียนคนใหม่
+
+    // บันทึก metadata (ไม่มี img)
     data[g].push({ name, room });
     saveStudents(data);
 
+    // บันทึกรูปใน IndexedDB (compress ก่อน)
     if (pendingAvatarBase64) {
       try {
         const compressed = await compressImage(pendingAvatarBase64, 400, 0.75);
         await dbSetImage(`student_${g}_${idx}`, compressed);
       } catch (e) {
+        console.error('[DB] save image error', e);
         showToast('⚠️ บันทึกรูปภาพไม่สำเร็จ แต่เพิ่มนักเรียนแล้ว', true);
       }
     }
 
     await renderAll();
+
+    // reset form
     document.getElementById('inputName').value  = '';
     document.getElementById('inputGrade').value = '';
     document.getElementById('inputRoom').value  = '';
     pendingAvatarBase64 = null;
     const wrap = document.getElementById('avatarPreviewWrap');
     wrap.innerHTML = '<span>แตะเพื่อ<br>เลือกรูป</span>';
+
     showToast(`✅ เพิ่ม "${name}" ใน ม.${g} แล้ว`);
   }
 
-  // ── DELETE STUDENT ─────────────────────────────────────────────────────────
+  // ── DELETE STUDENT (admin only) ───────────────────────────────────────────
   async function deleteStudent(grade, idx) {
     if (!isAdmin) { showToast('⛔ เฉพาะผู้ดูแลระบบเท่านั้น', true); return; }
     if (!confirm('ต้องการลบนักเรียนคนนี้?')) return;
@@ -819,10 +828,15 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
     const data = loadStudents();
     const key  = String(grade);
     const list = data[key] || [];
+
+    // ลบ metadata
     list.splice(idx, 1);
     saveStudents(data);
+
+    // ลบรูปของคนนี้ออกจาก IndexedDB
     await dbDeleteImage(`student_${grade}_${idx}`).catch(() => {});
 
+    // re-index รูปที่เหลือ (เลื่อน idx คนหลัง idx ที่ลบ)
     for (let i = idx; i < list.length; i++) {
       const oldKey = `student_${grade}_${i + 1}`;
       const newKey = `student_${grade}_${i}`;
@@ -835,31 +849,25 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
       }
     }
 
-    // re-index vote counts too
-    const counts = loadVoteCounts();
-    const oldCounts = {};
-    for (let i = idx; i < list.length; i++) {
-      oldCounts[`${grade}_${i}`] = counts[`${grade}_${i+1}`] || 0;
-    }
-    delete counts[`${grade}_${idx}`];
-    for (const k in oldCounts) counts[k] = oldCounts[k];
-    saveVoteCounts(counts);
-
     await renderAll();
     showToast('🗑️ ลบนักเรียนแล้ว');
   }
 
-  // ── AVATAR PREVIEW ─────────────────────────────────────────────────────────
+  // ── AVATAR PREVIEW (admin only) ──────────────────────────────────────────
   let pendingAvatarBase64 = null;
 
   function previewAvatar(input) {
     if (!isAdmin) return;
     const file = input.files[0];
     if (!file) return;
+
+    // แสดง loading
     const wrap = document.getElementById('avatarPreviewWrap');
     wrap.innerHTML = '<span style="font-size:.65rem">กำลังโหลด...</span>';
+
     const reader = new FileReader();
     reader.onload = async (e) => {
+      // compress ก่อนแสดง preview
       const compressed = await compressImage(e.target.result, 400, 0.75);
       pendingAvatarBase64 = compressed;
       wrap.innerHTML = `<img src="${compressed}" alt="preview"/>`;
@@ -867,18 +875,34 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
     reader.readAsDataURL(file);
   }
 
-  // ── VOTE ───────────────────────────────────────────────────────────────────
-  let pendingVote = null;
+  // ── VOTE — 1 บัญชี 1 สิทธิ์ ────────────────────────────────────────────
+  // ใช้ key เดียว 'VOTED_ONCE_<uid>' เก็บว่าโหวตไปแล้วหรือยัง
+  function hasUsedVote() {
+    const uid = currentUser ? (currentUser.studentID || 'admin') : 'guest';
+    return localStorage.getItem(`VOTED_ONCE_${uid}`) === '1';
+  }
+
+  function markVoteUsed() {
+    const uid = currentUser ? (currentUser.studentID || 'admin') : 'guest';
+    localStorage.setItem(`VOTED_ONCE_${uid}`, '1');
+  }
+
+  // ข้อมูลที่รอยืนยัน
+  let pendingVote = null;   // { btn, grade, idx, name, img, room }
 
   function handleVote(btn, grade, idx, name) {
     if (!currentUser) { showToast('⛔ กรุณาเข้าสู่ระบบก่อน', true); return; }
     if (btn.classList.contains('voted')) return;
+
     if (hasUsedVote()) {
       showToast('⛔ คุณใช้สิทธิ์โหวตไปแล้ว ไม่สามารถโหวตซ้ำได้', true);
       return;
     }
+
     const data    = loadStudents();
     const student = (data[String(grade)] || [])[idx] || {};
+
+    // ดึงรูปจาก IndexedDB แล้วค่อยเปิด modal
     dbGetImage(`student_${grade}_${idx}`).catch(() => null).then(img => {
       pendingVote = { btn, grade: parseInt(grade), idx, name, img: img || null, room: student.room || '' };
       openConfirm();
@@ -887,16 +911,20 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
 
   function openConfirm() {
     const { name, grade, room, img } = pendingVote;
-    const [bgCol, accentCol] = avatarColors[parseInt(grade) - 1] || avatarColors[0];
+    const colorIdx = parseInt(grade) - 1;
+    const [bgCol, accentCol] = avatarColors[colorIdx] || avatarColors[0];
+
+    // avatar
     const avatarEl = document.getElementById('confirmAvatar');
-    avatarEl.style.background  = bgCol;
-    avatarEl.style.borderColor = bgCol;
+    avatarEl.style.background   = bgCol;
+    avatarEl.style.borderColor  = bgCol;
     avatarEl.innerHTML = img
       ? `<img src="${img}" alt="${name}"/>`
       : `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
            <circle cx="24" cy="18" r="9" fill="${accentCol}"/>
            <path d="M6 42c0-9.94 8.06-18 18-18s18 8.06 18 18" fill="${accentCol}"/>
          </svg>`;
+
     document.getElementById('confirmName').textContent  = name;
     document.getElementById('confirmClass').textContent = `ม.${grade}/${room}`;
     document.getElementById('confirmOverlay').classList.add('show');
@@ -911,10 +939,10 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
     if (!pendingVote) return;
     const { btn, grade, idx, name } = pendingVote;
 
-    // บันทึกคะแนน
-    incrementVote(grade, idx);
+    // บันทึกว่าบัญชีนี้โหวตแล้ว (1 สิทธิ์)
     markVoteUsed();
 
+    // อัปเดต UI การ์ดทั้งหมด — disable ปุ่มโหวตทุกใบ
     document.querySelectorAll('.btn-vote').forEach(b => {
       if (!b.classList.contains('voted')) {
         b.disabled = true;
@@ -922,6 +950,7 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
         b.title = 'คุณใช้สิทธิ์โหวตไปแล้ว';
       }
     });
+
     btn.classList.add('voted');
     btn.textContent = '✔ โหวตแล้ว';
     btn.disabled = true;
@@ -933,141 +962,6 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
     pendingVote = null;
   }
 
-  // ── RESULT PANEL ───────────────────────────────────────────────────────────
-  let currentResultTab = 1;
-
-  function toggleResultPanel() {
-    if (!isAdmin) return;
-    const panel = document.getElementById('resultPanel');
-    const btn   = document.getElementById('resultToggleBtn');
-    const isOpen = panel.classList.toggle('open');
-    btn.classList.toggle('active', isOpen);
-    btn.textContent = isOpen ? '✕ ปิดผลการโหวต' : '📊 ดูผลการโหวต';
-
-    // ปิด admin panel ถ้าเปิดอยู่
-    if (isOpen) {
-      document.getElementById('adminPanel').classList.remove('open');
-      document.getElementById('adminToggleBtn').classList.remove('active');
-      document.body.classList.remove('admin-open');
-      document.getElementById('adminToggleBtn').textContent = '⚙️ จัดการนักเรียน';
-      renderResultPanel();
-    }
-  }
-
-  async function renderResultPanel() {
-    const data   = loadStudents();
-    const counts = loadVoteCounts();
-
-    // นับ total votes
-    let totalVotes = 0;
-    for (const v of Object.values(counts)) totalVotes += v;
-    document.getElementById('resultMeta').textContent = `รวมทั้งหมด ${totalVotes} โหวต`;
-
-    // Summary bar — votes per grade
-    const summaryBar = document.getElementById('resultSummaryBar');
-    summaryBar.innerHTML = '';
-    GRADES.forEach(g => {
-      const list = data[String(g)] || [];
-      let gradeTotal = 0;
-      list.forEach((_, idx) => { gradeTotal += counts[`${g}_${idx}`] || 0; });
-      const chip = document.createElement('div');
-      chip.className = 'summary-chip';
-      chip.innerHTML = `<strong>${gradeTotal}</strong> ม.${g}`;
-      summaryBar.appendChild(chip);
-    });
-
-    // Tabs
-    const tabsEl = document.getElementById('resultTabs');
-    const contentsEl = document.getElementById('resultContents');
-    tabsEl.innerHTML = '';
-    contentsEl.innerHTML = '';
-
-    for (const g of GRADES) {
-      // tab button
-      const tab = document.createElement('button');
-      tab.className = 'result-tab' + (g === currentResultTab ? ' active' : '');
-      tab.textContent = `ม.${g}`;
-      tab.onclick = () => {
-        currentResultTab = g;
-        document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        document.querySelectorAll('.result-content').forEach(c => c.classList.remove('active'));
-        document.getElementById(`result-content-${g}`).classList.add('active');
-      };
-      tabsEl.appendChild(tab);
-
-      // content
-      const contentDiv = document.createElement('div');
-      contentDiv.className = 'result-content' + (g === currentResultTab ? ' active' : '');
-      contentDiv.id = `result-content-${g}`;
-
-      const list = data[String(g)] || [];
-      if (list.length === 0) {
-        contentDiv.innerHTML = '<div class="result-empty">ยังไม่มีนักเรียนในระดับชั้นนี้</div>';
-        contentsEl.appendChild(contentDiv);
-        continue;
-      }
-
-      // สร้าง array พร้อมคะแนน แล้ว sort
-      const entries = list.map((s, idx) => ({
-        ...s, idx,
-        votes: counts[`${g}_${idx}`] || 0
-      })).sort((a, b) => b.votes - a.votes);
-
-      const maxVotes = entries[0]?.votes || 1;
-      let gradeTotal = entries.reduce((s, e) => s + e.votes, 0);
-
-      const [bgCol, accentCol] = avatarColors[g - 1];
-      const listEl = document.createElement('div');
-      listEl.className = 'result-list';
-
-      for (let rank = 0; rank < entries.length; rank++) {
-        const e   = entries[rank];
-        const row = document.createElement('div');
-        row.className = 'result-row' +
-          (rank === 0 ? ' rank-1' : rank === 1 ? ' rank-2' : rank === 2 ? ' rank-3' : '');
-
-        // ดึงรูปจาก IndexedDB
-        const imgData = await dbGetImage(`student_${g}_${e.idx}`).catch(() => null);
-        const avatarInner = imgData
-          ? `<img src="${imgData}" alt="${e.name}"/>`
-          : `<svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="18" r="9" fill="${accentCol}"/>
-             <path d="M6 42c0-9.94 8.06-18 18-18s18 8.06 18 18" fill="${accentCol}"/></svg>`;
-
-        const rankLabel = rank === 0 ? '🥇' : rank === 1 ? '🥈' : rank === 2 ? '🥉' : `${rank+1}`;
-        const pct = maxVotes > 0 ? Math.round((e.votes / maxVotes) * 100) : 0;
-
-        row.innerHTML = `
-          <div class="result-rank">${rankLabel}</div>
-          <div class="result-avatar" style="background:${bgCol};border-color:${bgCol};">
-            ${avatarInner}
-          </div>
-          <div class="result-info">
-            <div class="result-name">${e.name}</div>
-            <div class="result-class">ม.${g}/${e.room}</div>
-          </div>
-          <div class="result-bar-wrap">
-            <div class="result-bar-track">
-              <div class="result-bar-fill" style="width:${pct}%"></div>
-            </div>
-          </div>
-          <div class="result-votes">${e.votes} <span>โหวต</span></div>
-        `;
-        listEl.appendChild(row);
-      }
-
-      if (gradeTotal === 0) {
-        const note = document.createElement('p');
-        note.style.cssText = 'font-size:.8rem;color:var(--muted);margin-top:12px;font-style:italic;';
-        note.textContent = 'ยังไม่มีผู้ได้รับการโหวตในระดับชั้นนี้';
-        listEl.appendChild(note);
-      }
-
-      contentDiv.appendChild(listEl);
-      contentsEl.appendChild(contentDiv);
-    }
-  }
-
   // ── ADMIN PANEL TOGGLE ────────────────────────────────────────────────────
   function toggleAdminPanel() {
     if (!isAdmin) return;
@@ -1077,13 +971,6 @@ function compressImage(dataUrl, maxDim = 400, quality = 0.75) {
     btn.classList.toggle('active', isOpen);
     document.body.classList.toggle('admin-open', isOpen);
     btn.textContent = isOpen ? '✕ ปิดโหมดจัดการ' : '⚙️ จัดการนักเรียน';
-
-    // ปิด result panel ถ้าเปิดอยู่
-    if (isOpen) {
-      document.getElementById('resultPanel').classList.remove('open');
-      document.getElementById('resultToggleBtn').classList.remove('active');
-      document.getElementById('resultToggleBtn').textContent = '📊 ดูผลการโหวต';
-    }
   }
 
   // ── LOGOUT ────────────────────────────────────────────────────────────────
