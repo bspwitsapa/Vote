@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบโหวตนักเรียน</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗳️ ระบบโหวตนักเรียน</h1>
+            <p>เลือกชั้นเรียนและห้องของคุณ</p>
+        </header>
+
+        <!-- หน้าเลือกชั้น -->
+        <div id="gradeSelection" class="section">
+            <h2>เลือกชั้นเรียน</h2>
+            <div class="grade-buttons">
+                <button class="grade-btn" onclick="selectGrade(1)">ม.1</button>
+                <button class="grade-btn" onclick="selectGrade(2)">ม.2</button>
+                <button class="grade-btn" onclick="selectGrade(3)">ม.3</button>
+                <button class="grade-btn" onclick="selectGrade(4)">ม.4</button>
+                <button class="grade-btn" onclick="selectGrade(5)">ม.5</button>
+                <button class="grade-btn" onclick="selectGrade(6)">ม.6</button>
+            </div>
+        </div>
+
+        <!-- หน้าเลือกห้อง -->
+        <div id="classroomSelection" class="section hidden">
+            <button class="back-btn" onclick="backToGrade()">← กลับ</button>
+            <h2>เลือกห้องเรียน (ม.<span id="selectedGradeDisplay"></span>)</h2>
+            <div id="classroomGrid" class="classroom-grid">
+                <!-- ห้องจะสร้างด้วย JavaScript -->
+            </div>
+        </div>
+
+        <!-- หน้าโหวต -->
+        <div id="votingPage" class="section hidden">
+            <button class="back-btn" onclick="backToClassroom()">← กลับ</button>
+            <div class="classroom-info">
+                <img id="classroomImage" src="" alt="รูปห้อง" class="classroom-image">
+                <h2>ห้อง <span id="classroomNumberDisplay"></span> ม.<span id="gradeNumberDisplay"></span></h2>
+            </div>
+
+            <!-- ฟอร์มป้อนข้อมูลนักเรียน -->
+            <div class="student-form">
+                <h3>ป้อนข้อมูลนักเรียน</h3>
+                <input type="text" id="studentName" placeholder="ชื่อ-นามสกุล" required>
+                <input type="text" id="studentID" placeholder="เลขที่นักเรียน" required>
+                <button class="btn-primary" onclick="verifyStudent()">ตรวจสอบ</button>
+            </div>
+
+            <!-- หน้าโหวต -->
+            <div id="pollSection" class="hidden">
+                <h3>โปรดเลือกตัวเลือกของคุณ</h3>
+                <div id="pollOptions" class="poll-options">
+                    <!-- ตัวเลือกจะสร้างด้วย JavaScript -->
+                </div>
+                <button class="btn-primary" onclick="submitVote()">ยืนยันการโหวต</button>
+            </div>
+
+            <!-- ข้อความหลังโหวต -->
+            <div id="voteSuccessMessage" class="hidden success-message">
+                <h3>✅ ขอบคุณที่โหวต</h3>
+                <p>การโหวตของคุณถูกบันทึกแล้ว</p>
+                <button class="btn-primary" onclick="reset()">โหวตใหม่</button>
+            </div>
+
+            <!-- ข้อความเมื่อโหวตซ้ำ -->
+            <div id="alreadyVotedMessage" class="hidden error-message">
+                <h3>⚠️ คุณโหวตแล้ว</h3>
+                <p>คุณได้โหวตในการโหวตนี้แล้ว ไม่สามารถโหวตอีกได้</p>
+                <button class="btn-primary" onclick="reset()">กลับหน้าแรก</button>
+            </div>
+        </div>
+
+        <!-- หน้าจัดการ (สำหรับครู) -->
+        <div class="admin-section">
+            <button class="admin-btn" onclick="toggleAdmin()">🔧 ผู้ดูแลระบบ</button>
+            <div id="adminPanel" class="hidden">
+                <h3>จัดการระบบโหวต</h3>
+                <div class="admin-form">
+                    <h4>อัพโหลดรูปห้อง</h4>
+                    <select id="adminGradeSelect" onchange="updateClassroomSelect()">
+                        <option value="">เลือกชั้น</option>
+                        <option value="1">ม.1</option>
+                        <option value="2">ม.2</option>
+                        <option value="3">ม.3</option>
+                        <option value="4">ม.4</option>
+                        <option value="5">ม.5</option>
+                        <option value="6">ม.6</option>
+                    </select>
+                    <select id="adminClassroomSelect">
+                        <option value="">เลือกห้อง</option>
+                    </select>
+                    <input type="file" id="imageUpload" accept="image/*">
+                    <button class="btn-primary" onclick="uploadClassroomImage()">อัพโหลดรูป</button>
+                </div>
+
+                <div class="admin-form">
+                    <h4>สร้างการโหวต</h4>
+                    <input type="text" id="pollTitle" placeholder="หัวข้อการโหวต" required>
+                    <textarea id="pollDescription" placeholder="คำอธิบาย"></textarea>
+                    <div id="pollOptionsInput"></div>
+                    <button class="btn-primary" onclick="addPollOption()">+ เพิ่มตัวเลือก</button>
+                    <button class="btn-primary" onclick="createPoll()">สร้างการโหวต</button>
+                </div>
+
+                <div class="admin-form">
+                    <h4>ดูผลการโหวต</h4>
+                    <button class="btn-primary" onclick="showResults()">ดูผลลัพธ์</button>
+                    <div id="resultsDisplay"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
