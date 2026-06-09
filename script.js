@@ -1,8 +1,10 @@
 // ข้อมูลสำหรับเก็บลง Local Storage
 const STORAGE_KEY = 'votingData';
+const STUDENTS_KEY = 'students';
 const VOTES_KEY = 'votes';
 const CLASSROOMS_KEY = 'classrooms';
 const POLL_KEY = 'currentPoll';
+const ADMIN_PASSWORD = 'admin123'; // รหัสผ่าน Admin
 
 // ข้อมูลคลาส
 const GRADES = 6;
@@ -12,40 +14,267 @@ const CLASSROOMS_PER_GRADE = 13;
 let currentGrade = null;
 let currentClassroom = null;
 let currentPoll = null;
-let pollOptions = [];
+let currentUser = null; // {studentID, name, grade, classroom}
+let isAdminMode = false;
+let optionCount = 0;
 
 // เริ่มต้นระบบ
 window.addEventListener('DOMContentLoaded', () => {
     initializeSystem();
-    loadClassroomImages();
-    loadCurrentPoll();
+    checkCurrentUser();
 });
 
 // เตรียมระบบ
 function initializeSystem() {
-    // โหลดข้อมูลจาก Local Storage
     if (!localStorage.getItem(STORAGE_KEY)) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            [STUDENTS_KEY]: {},
             [CLASSROOMS_KEY]: {},
             [VOTES_KEY]: []
         }));
     }
+    loadCurrentPoll();
 }
 
-// เลือกชั้น
+// ตรวจสอบผู้ใช้ที่เข้าสู่ระบบ
+function checkCurrentUser() {
+    const userData = sessionStorage.getItem('currentUser');
+    if (userData) {
+        currentUser = JSON.parse(userData);
+        if (currentUser.isAdmin) {
+            isAdminMode = true;
+            showAdminPage();
+        } else {
+            showGradeSelection();
+        }
+    } else {
+        showLoginPage();
+    }
+}
+
+// ═══ หน้า Login ═══
+
+function showLoginPage() {
+    hideAll();
+    document.getElementById('loginPage').classList.remove('hidden');
+}
+
+function goToStudentLogin() {
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('studentLoginPage').classList.remove('hidden');
+    document.getElementById('registerForm').classList.add('active');
+    document.getElementById('loginForm').classList.add('hidden');
+}
+
+function goToAdminLogin() {
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('adminLoginPage').classList.remove('hidden');
+}
+
+function backToRoleSelection() {
+    document.getElementById('studentLoginPage').classList.add('hidden');
+    document.getElementById('adminLoginPage').classList.add('hidden');
+    document.getElementById('loginPage').classList.remove('hidden');
+}
+
+// ═══ ระบบลงทะเบียนนักเรียน ═══
+
+function switchStudentTab(tab) {
+    if (tab === 'register') {
+        document.getElementById('registerForm').classList.add('active');
+        document.getElementById('loginForm').classList.remove('active');
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.querySelectorAll('.tab-btn')[1].classList.remove('active');
+    } else {
+        document.getElementById('loginForm').classList.add('active');
+        document.getElementById('registerForm').classList.remove('active');
+        document.querySelectorAll('.tab-btn')[0].classList.remove('active');
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+    }
+}
+
+// อัพเดทตัวเลือกห้องเมื่อเลือกชั้น (ในฟอร์มลงทะเบียน)
+document.addEventListener('change', (e) => {
+    if (e.target.id === 'regGrade') {
+        const grade = e.target.value;
+        const classroomSelect = document.getElementById('regClassroom');
+        classroomSelect.innerHTML = '<option value="">เลือกห้อง</option>';
+        
+        if (grade) {
+            for (let room = 1; room <= CLASSROOMS_PER_GRADE; room++) {
+                const option = document.createElement('option');
+                option.value = room;
+                option.textContent = `ห้อง ${room}`;
+                classroomSelect.appendChild(option);
+            }
+        }
+    }
+});
+
+function registerStudent() {
+    const studentID = document.getElementById('regStudentID').value.trim();
+    const name = document.getElementById('regName').value.trim();
+    const grade = document.getElementById('regGrade').value;
+    const classroom = document.getElementById('regClassroom').value;
+    const password = document.getElementById('regPassword').value;
+    const passwordConfirm = document.getElementById('regPasswordConfirm').value;
+
+    // ตรวจสอบ
+    if (!studentID || !name || !grade || !classroom || !password) {
+        alert('กรุณากรอกข้อมูลให้ครบทั้งหมด');
+        return;
+    }
+
+    if (password !== passwordConfirm) {
+        alert('รหัสผ่านไม่ตรงกัน');
+        return;
+    }
+
+    if (password.length < 4) {
+        alert('รหัสผ่านต้องมีความยาวอย่างน้อย 4 ตัวอักษร');
+        return;
+    }
+
+    const students = getStudents();
+    
+    // ตรวจสอบว่ามีเลขประจำตัวนี้แล้วหรือไม่
+    if (students[studentID]) {
+        alert('เลขประจำตัวนี้ลงทะเบียนแล้ว');
+        return;
+    }
+
+    // บันทึกข้อมูล
+    students[studentID] = {
+        studentID,
+        name,
+        grade: parseInt(grade),
+        classroom: parseInt(classroom),
+        password: hashPassword(password),
+        registeredAt: new Date().toISOString()
+    };
+
+    saveStudents(students);
+    alert('ลงทะเบียนสำเร็จ! โปรดเข้าสู่ระบบ');
+    
+    // รีเซ็ตฟอร์มและสลับไปที่ฟอร์มเข้าสู่ระบบ
+    document.getElementById('regStudentID').value = '';
+    document.getElementById('regName').value = '';
+    document.getElementById('regGrade').value = '';
+    document.getElementById('regClassroom').value = '';
+    document.getElementById('regPassword').value = '';
+    document.getElementById('regPasswordConfirm').value = '';
+    
+    switchStudentTab('login');
+}
+
+function studentLogin() {
+    const studentID = document.getElementById('loginStudentID').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    if (!studentID || !password) {
+        alert('กรุณากรอกเลขประจำตัวและรหัสผ่าน');
+        return;
+    }
+
+    const students = getStudents();
+    const student = students[studentID];
+
+    if (!student) {
+        alert('ไม่พบเลขประจำตัวนี้');
+        return;
+    }
+
+    if (student.password !== hashPassword(password)) {
+        alert('รหัสผ่านไม่ถูกต้อง');
+        return;
+    }
+
+    // เข้าสู่ระบบสำเร็จ
+    currentUser = {
+        studentID: student.studentID,
+        name: student.name,
+        grade: student.grade,
+        classroom: student.classroom,
+        isAdmin: false
+    };
+
+    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+    
+    // ล้างฟอร์ม
+    document.getElementById('loginStudentID').value = '';
+    document.getElementById('loginPassword').value = '';
+    
+    showGradeSelection();
+}
+
+function adminLogin() {
+    const password = document.getElementById('adminPassword').value;
+
+    if (!password) {
+        alert('กรุณากรอกรหัสผ่าน');
+        return;
+    }
+
+    if (hashPassword(password) !== hashPassword(ADMIN_PASSWORD)) {
+        alert('รหัสผ่านไม่ถูกต้อง');
+        return;
+    }
+
+    // เข้าสู่ระบบ Admin สำเร็จ
+    currentUser = {
+        isAdmin: true
+    };
+
+    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+    document.getElementById('adminPassword').value = '';
+    isAdminMode = true;
+    showAdminPage();
+}
+
+// ═══ ฟังก์ชันแสดงหน้า ═══
+
+function showGradeSelection() {
+    hideAll();
+    document.getElementById('gradeSelection').classList.remove('hidden');
+    document.getElementById('currentUserDisplay').textContent = `ผู้ใช้: ${currentUser.name} (เลขที่ ${currentUser.studentID})`;
+}
+
+function showAdminPage() {
+    hideAll();
+    document.getElementById('adminPage').classList.remove('hidden');
+}
+
+function hideAll() {
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('studentLoginPage').classList.add('hidden');
+    document.getElementById('adminLoginPage').classList.add('hidden');
+    document.getElementById('gradeSelection').classList.add('hidden');
+    document.getElementById('classroomSelection').classList.add('hidden');
+    document.getElementById('votingPage').classList.add('hidden');
+    document.getElementById('adminPage').classList.add('hidden');
+}
+
+function logout() {
+    sessionStorage.removeItem('currentUser');
+    currentUser = null;
+    isAdminMode = false;
+    currentGrade = null;
+    currentClassroom = null;
+    showLoginPage();
+}
+
+// ═══ นักเรียน - เลือกชั้นและห้อง ═══
+
 function selectGrade(grade) {
     currentGrade = grade;
     document.getElementById('selectedGradeDisplay').textContent = grade;
     
-    // สร้างปุ่มห้องเรียน
     createClassroomButtons();
     
-    // ซ่อนการเลือกชั้น แสดงการเลือกห้อง
     document.getElementById('gradeSelection').classList.add('hidden');
     document.getElementById('classroomSelection').classList.remove('hidden');
 }
 
-// สร้างปุ่มห้องเรียน
 function createClassroomButtons() {
     const grid = document.getElementById('classroomGrid');
     grid.innerHTML = '';
@@ -57,9 +286,12 @@ function createClassroomButtons() {
         btn.className = 'classroom-btn';
         btn.textContent = `ห้อง ${room}`;
         
-        // ตรวจสอบว่าห้องนี้โหวตแล้วหรือไม่
         const classroomKey = `${currentGrade}-${room}`;
-        const hasVoted = votes.some(v => v.classroom === classroomKey && v.poll === currentPoll?.id);
+        const hasVoted = votes.some(v => 
+            v.classroom === classroomKey && 
+            v.poll === currentPoll?.id &&
+            v.studentID === currentUser.studentID
+        );
         
         if (hasVoted) {
             btn.classList.add('voted');
@@ -70,28 +302,19 @@ function createClassroomButtons() {
     }
 }
 
-// เลือกห้องเรียน
 function selectClassroom(room) {
     currentClassroom = room;
     document.getElementById('classroomNumberDisplay').textContent = room;
     document.getElementById('gradeNumberDisplay').textContent = currentGrade;
     
-    // โหลดรูปห้อง
     loadClassroomImage();
     
-    // รีเซ็ตฟอร์ม
-    document.getElementById('studentName').value = '';
-    document.getElementById('studentID').value = '';
-    document.getElementById('pollSection').classList.add('hidden');
-    document.getElementById('voteSuccessMessage').classList.add('hidden');
-    document.getElementById('alreadyVotedMessage').classList.add('hidden');
-    
-    // ซ่อนการเลือกห้อง แสดงหน้าโหวต
     document.getElementById('classroomSelection').classList.add('hidden');
     document.getElementById('votingPage').classList.remove('hidden');
+    
+    showPollOrMessage();
 }
 
-// โหลดรูปห้อง
 function loadClassroomImage() {
     const classroomKey = `${currentGrade}-${currentClassroom}`;
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -105,53 +328,36 @@ function loadClassroomImage() {
     }
 }
 
-// โหลดรูปห้องทั้งหมด
-function loadClassroomImages() {
-    // ดึงข้อมูลรูปจาก Local Storage
-}
-
-// ตรวจสอบนักเรียน
-function verifyStudent() {
-    const name = document.getElementById('studentName').value.trim();
-    const studentID = document.getElementById('studentID').value.trim();
-    
-    if (!name || !studentID) {
-        alert('กรุณากรอกชื่อและเลขที่นักเรียน');
-        return;
-    }
-    
-    // เก็บข้อมูลนักเรียน
-    sessionStorage.setItem('studentName', name);
-    sessionStorage.setItem('studentID', studentID);
-    
-    // ตรวจสอบว่าโหวตแล้วไหม
-    if (checkIfAlreadyVoted(name, studentID)) {
+function showPollOrMessage() {
+    if (!currentPoll) {
         document.getElementById('pollSection').classList.add('hidden');
-        document.getElementById('alreadyVotedMessage').classList.remove('hidden');
+        document.getElementById('voteSuccessMessage').classList.add('hidden');
+        document.getElementById('alreadyVotedMessage').classList.add('hidden');
+        document.getElementById('noPolsMessage').classList.remove('hidden');
         return;
     }
-    
-    // แสดงฟอร์มโหวต
-    document.getElementById('pollSection').classList.remove('hidden');
-    createPollOptionsUI();
-}
 
-// ตรวจสอบว่าโหวตแล้วไหม
-function checkIfAlreadyVoted(name, studentID) {
-    if (!currentPoll) return false;
-    
     const votes = getVotes();
     const classroomKey = `${currentGrade}-${currentClassroom}`;
-    
-    return votes.some(v => 
-        v.name === name && 
-        v.studentID === studentID && 
+    const hasVoted = votes.some(v => 
+        v.classroom === classroomKey && 
         v.poll === currentPoll.id &&
-        v.classroom === classroomKey
+        v.studentID === currentUser.studentID
     );
+
+    document.getElementById('noPolsMessage').classList.add('hidden');
+    document.getElementById('voteSuccessMessage').classList.add('hidden');
+    document.getElementById('alreadyVotedMessage').classList.add('hidden');
+
+    if (hasVoted) {
+        document.getElementById('pollSection').classList.add('hidden');
+        document.getElementById('alreadyVotedMessage').classList.remove('hidden');
+    } else {
+        document.getElementById('pollSection').classList.remove('hidden');
+        createPollOptionsUI();
+    }
 }
 
-// สร้าง UI ตัวเลือกการโหวต
 function createPollOptionsUI() {
     const container = document.getElementById('pollOptions');
     container.innerHTML = '';
@@ -181,7 +387,6 @@ function createPollOptionsUI() {
     });
 }
 
-// ส่งการโหวต
 function submitVote() {
     const selected = document.querySelector('input[name="poll-option"]:checked');
     
@@ -190,17 +395,14 @@ function submitVote() {
         return;
     }
     
-    const name = sessionStorage.getItem('studentName');
-    const studentID = sessionStorage.getItem('studentID');
     const classroomKey = `${currentGrade}-${currentClassroom}`;
     const selectedOption = currentPoll.options[selected.value];
     
-    // บันทึกการโหวต
     const votes = getVotes();
     votes.push({
         id: Date.now(),
-        name: name,
-        studentID: studentID,
+        studentID: currentUser.studentID,
+        name: currentUser.name,
         classroom: classroomKey,
         poll: currentPoll.id,
         option: selectedOption,
@@ -209,48 +411,32 @@ function submitVote() {
     
     saveVotes(votes);
     
-    // แสดงข้อความสำเร็จ
     document.getElementById('pollSection').classList.add('hidden');
     document.getElementById('voteSuccessMessage').classList.remove('hidden');
-    
-    // เคลียร์ Session Storage
-    sessionStorage.removeItem('studentName');
-    sessionStorage.removeItem('studentID');
 }
 
-// รีเซ็ต
-function reset() {
-    currentClassroom = null;
-    document.getElementById('votingPage').classList.add('hidden');
-    document.getElementById('classroomSelection').classList.remove('hidden');
-    document.getElementById('gradeSelection').classList.remove('hidden');
-    
-    createClassroomButtons();
-}
-
-// กลับไปเลือกชั้น
 function backToGrade() {
     currentGrade = null;
     document.getElementById('classroomSelection').classList.add('hidden');
     document.getElementById('gradeSelection').classList.remove('hidden');
 }
 
-// กลับไปเลือกห้อง
 function backToClassroom() {
     currentClassroom = null;
     document.getElementById('votingPage').classList.add('hidden');
     document.getElementById('classroomSelection').classList.remove('hidden');
 }
 
-// ═══ ส่วนจัดการ (Admin) ═══
-
-// เปิด/ปิด Admin Panel
-function toggleAdmin() {
-    const panel = document.getElementById('adminPanel');
-    panel.classList.toggle('hidden');
+function reset() {
+    currentClassroom = null;
+    document.getElementById('votingPage').classList.add('hidden');
+    document.getElementById('classroomSelection').classList.remove('hidden');
+    document.getElementById('gradeSelection').classList.remove('hidden');
+    createClassroomButtons();
 }
 
-// อัพเดทตัวเลือกห้องในหน้า Admin
+// ═══ ส่วนจัดการ (Admin) ═══
+
 function updateClassroomSelect() {
     const gradeSelect = document.getElementById('adminGradeSelect');
     const classroomSelect = document.getElementById('adminClassroomSelect');
@@ -268,7 +454,6 @@ function updateClassroomSelect() {
     }
 }
 
-// อัพโหลดรูปห้อง
 function uploadClassroomImage() {
     const classroomSelect = document.getElementById('adminClassroomSelect');
     const imageInput = document.getElementById('imageUpload');
@@ -298,9 +483,6 @@ function uploadClassroomImage() {
     
     reader.readAsDataURL(file);
 }
-
-// เพิ่มตัวเลือกการโหวต
-let optionCount = 0;
 
 function addPollOption() {
     optionCount++;
@@ -333,7 +515,6 @@ function addPollOption() {
     container.appendChild(div);
 }
 
-// สร้างการโหวต
 function createPoll() {
     const title = document.getElementById('pollTitle').value.trim();
     const description = document.getElementById('pollDescription').value.trim();
@@ -367,14 +548,12 @@ function createPoll() {
     
     alert('สร้างการโหวตสำเร็จ!');
     
-    // รีเซ็ตฟอร์ม
     document.getElementById('pollTitle').value = '';
     document.getElementById('pollDescription').value = '';
     document.getElementById('pollOptionsInput').innerHTML = '';
     optionCount = 0;
 }
 
-// ดูผลการโหวต
 function showResults() {
     if (!currentPoll) {
         alert('ยังไม่มีการโหวต');
@@ -392,7 +571,6 @@ function showResults() {
         return;
     }
     
-    // นับการโหวตแต่ละตัวเลือก
     const counts = {};
     currentPoll.options.forEach(option => {
         counts[option] = 0;
@@ -402,7 +580,6 @@ function showResults() {
         counts[vote.option]++;
     });
     
-    // แสดงผล
     const maxVotes = Math.max(...Object.values(counts));
     
     Object.entries(counts).forEach(([option, count]) => {
@@ -425,22 +602,68 @@ function showResults() {
     resultsDiv.innerHTML += `<p style="margin-top: 15px; color: #666;">รวมการโหวต: ${pollVotes.length} คน</p>`;
 }
 
+function showStudentList() {
+    const students = getStudents();
+    const display = document.getElementById('studentListDisplay');
+    
+    if (Object.keys(students).length === 0) {
+        display.innerHTML = '<p>ยังไม่มีนักเรียนลงทะเบียน</p>';
+        return;
+    }
+    
+    let html = '<table style="width:100%; border-collapse:collapse;">';
+    html += '<tr style="background:#f0f0f0;"><th style="border:1px solid #ddd; padding:10px;">เลขประจำตัว</th>';
+    html += '<th style="border:1px solid #ddd; padding:10px;">ชื่อ</th>';
+    html += '<th style="border:1px solid #ddd; padding:10px;">ชั้น</th>';
+    html += '<th style="border:1px solid #ddd; padding:10px;">ห้อง</th>';
+    html += '<th style="border:1px solid #ddd; padding:10px;">วันที่ลงทะเบียน</th></tr>';
+    
+    Object.values(students).forEach(student => {
+        const date = new Date(student.registeredAt).toLocaleDateString('th-TH');
+        html += `<tr>
+            <td style="border:1px solid #ddd; padding:10px;">${student.studentID}</td>
+            <td style="border:1px solid #ddd; padding:10px;">${student.name}</td>
+            <td style="border:1px solid #ddd; padding:10px;">ม.${student.grade}</td>
+            <td style="border:1px solid #ddd; padding:10px;">ห้อง ${student.classroom}</td>
+            <td style="border:1px solid #ddd; padding:10px;">${date}</td>
+        </tr>`;
+    });
+    
+    html += '</table>';
+    display.innerHTML = html;
+}
+
 // ═══ ฟังก์ชันช่วย (Helper Functions) ═══
 
-// ดึงข้อมูลการโหวต
+function hashPassword(password) {
+    // Simple hash function (not for production!)
+    return password.split('').reduce((acc, char) => {
+        return acc + char.charCodeAt(0);
+    }, 0).toString();
+}
+
+function getStudents() {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return data[STUDENTS_KEY] || {};
+}
+
+function saveStudents(students) {
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    data[STUDENTS_KEY] = students;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
 function getVotes() {
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
     return data[VOTES_KEY] || [];
 }
 
-// บันทึกการโหวต
 function saveVotes(votes) {
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
     data[VOTES_KEY] = votes;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-// โหลดการโหวตปัจจุบัน
 function loadCurrentPoll() {
     const pollData = localStorage.getItem(POLL_KEY);
     if (pollData) {
